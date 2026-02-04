@@ -14,4 +14,12 @@ public interface AnalyticsService {
     ShipmentMetricsResponse getShipmentMetrics();
 
     DashboardSummaryResponse getDashboardSummary();
+
+    List<PickHeatmapResponse> getPickHeatmap();
+
+    List<PickerWorkloadResponse> getPickerWorkload();
+
+    List<StockConfidenceResponse> getStockConfidence();
+
+    List<ShipmentRiskResponse> getShipmentRisk();
 }

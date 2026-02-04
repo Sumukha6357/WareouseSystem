@@ -18,6 +18,7 @@ const MapComponent = dynamic(() => import('@/components/ui/Map'), {
 export default function LiveTrackingView() {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const [warehouses, setWarehouses] = useState<any[]>([]);
+    const [pickHeatmap, setPickHeatmap] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
     const [eventLog, setEventLog] = useState<string[]>([]);
@@ -51,10 +52,17 @@ export default function LiveTrackingView() {
 
     const loadData = async () => {
         try {
-            // Simulated data if API returns empty for demo purposes
-            // In a real app we'd fetch Warehouse data too
-            // const warehouseData = await WarehouseService.getAllWarehouses();
-            // setWarehouses(warehouseData);
+            // Load Analytics for Heatmap
+            import('../services/AnalyticsService').then(async ({ AnalyticsService }) => {
+                try {
+                    const dashboardData = await AnalyticsService.getDashboardSummary();
+                    if (dashboardData.pickHeatmap) {
+                        setPickHeatmap(dashboardData.pickHeatmap);
+                    }
+                } catch (e) {
+                    console.error("Failed to load heatmap", e);
+                }
+            });
 
             const realData = await VehicleService.getActiveVehicles();
 
@@ -171,7 +179,7 @@ export default function LiveTrackingView() {
 
                 {/* Map Area */}
                 <Card className="flex-1 overflow-hidden relative border-0 shadow-lg">
-                    <MapComponent vehicles={vehicles} warehouses={warehouses} />
+                    <MapComponent vehicles={vehicles} warehouses={warehouses} pickHeatmap={pickHeatmap} />
                 </Card>
             </div>
         </div>

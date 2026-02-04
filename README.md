@@ -4,12 +4,13 @@ A comprehensive, full-stack Warehouse Management System (WMS) built to streamlin
 
 ## 🚀 Features
 
-*   **Inventory Management**: Real-time tracking of stock across multiple warehouses and storage blocks.
-*   **Order Fulfillment**: End-to-end workflow from Order Creation -> Picking -> Packing -> Dispatch.
-*   **Picker Tasks**: Mobile-friendly view for staff to receive and complete picking assignments.
-*   **Shipment Tracking**: Manage carriers (Shippers) and track outbound shipments with status updates.
-*   **Real-time Analytics**: Live dashboards showing stock turnover, fulfillment times, and block utilization.
-*   **Role-Based Access**: Secure access for Admin, Staff, and Drivers.
+*   **Inventory Logistics**: Real-time tracking of stock across multiple warehouses and storage blocks with strict **Capacity Guard** enforcement.
+*   **Predictive Intelligence**: AI-driven **Stock Confidence** scoring and **Shipment Risk** radar to proactively identify stock inaccuracies and fulfillment delays.
+*   **Spatial Awareness**: Interactive **Warehouse Heatmaps** visualizing active picks, spatial congestion, and storage utilization.
+*   **Operational Observability**: Real-time system health dashboard showing **API Latency**, WebSocket session stability, and fulfillment bottlenecks.
+*   **Advanced Fulfillment**: End-to-end workflow (Pick -> Pack -> Dispatch) with strict sequencing and **Team Pulse** productivity tracking.
+*   **Enterprise Security**: Robust Role-Based Access Control (RBAC) with 7+ granular roles (Warehouse Manager, Picker, Packer, Supervisor, Auditor, etc.).
+*   **Rich Activity Feed**: Live audit trails of all stock movements and staff activities for total transparency.
 
 ## 🛠 Tech Stack
 

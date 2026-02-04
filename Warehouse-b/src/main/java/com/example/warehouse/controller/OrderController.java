@@ -24,7 +24,7 @@ public class OrderController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'WAREHOUSE_MANAGER', 'SUPERVISOR')")
     public ResponseEntity<ResponseStructure<OrderResponse>> createOrder(@RequestBody OrderRequest request) {
         OrderResponse response = orderService.createOrder(request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -71,7 +71,7 @@ public class OrderController {
     }
 
     @PostMapping("/assign-pickers")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'WAREHOUSE_MANAGER', 'SUPERVISOR')")
     public ResponseEntity<ResponseStructure<OrderResponse>> assignPickers(
             @RequestBody PickTaskAssignmentRequest request) {
         OrderResponse response = orderService.assignPickers(request);
@@ -82,7 +82,7 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}/mark-picked")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'WAREHOUSE_MANAGER', 'SUPERVISOR', 'PICKER')")
     public ResponseEntity<ResponseStructure<OrderResponse>> markAsPicked(@PathVariable String orderId) {
         OrderResponse response = orderService.markOrderAsPicked(orderId);
         return ResponseEntity.ok(new ResponseStructure<>(
@@ -92,7 +92,7 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}/mark-packed")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'WAREHOUSE_MANAGER', 'SUPERVISOR', 'PACKER')")
     public ResponseEntity<ResponseStructure<OrderResponse>> markAsPacked(@PathVariable String orderId) {
         OrderResponse response = orderService.markOrderAsPacked(orderId);
         return ResponseEntity.ok(new ResponseStructure<>(
@@ -102,7 +102,7 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}/mark-dispatched")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'WAREHOUSE_MANAGER', 'SUPERVISOR')")
     public ResponseEntity<ResponseStructure<OrderResponse>> markAsDispatched(@PathVariable String orderId) {
         OrderResponse response = orderService.markOrderAsDispatched(orderId);
         return ResponseEntity.ok(new ResponseStructure<>(
@@ -112,7 +112,7 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}/cancel")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'WAREHOUSE_MANAGER')")
     public ResponseEntity<ResponseStructure<OrderResponse>> cancelOrder(@PathVariable String orderId) {
         OrderResponse response = orderService.cancelOrder(orderId);
         return ResponseEntity.ok(new ResponseStructure<>(
@@ -150,7 +150,7 @@ public class OrderController {
     }
 
     @PutMapping("/pick-tasks/{taskId}/start")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PICKER', 'WAREHOUSE_MANAGER')")
     public ResponseEntity<ResponseStructure<PickTaskResponse>> startPickTask(@PathVariable String taskId) {
         PickTaskResponse response = orderService.startPickTask(taskId);
         return ResponseEntity.ok(new ResponseStructure<>(
@@ -160,7 +160,7 @@ public class OrderController {
     }
 
     @PutMapping("/pick-tasks/{taskId}/complete")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PICKER', 'WAREHOUSE_MANAGER')")
     public ResponseEntity<ResponseStructure<PickTaskResponse>> completePickTask(@PathVariable String taskId) {
         PickTaskResponse response = orderService.completePickTask(taskId);
         return ResponseEntity.ok(new ResponseStructure<>(

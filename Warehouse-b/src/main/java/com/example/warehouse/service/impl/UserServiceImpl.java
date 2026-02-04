@@ -38,12 +38,11 @@ public class UserServiceImpl implements UserService {
 
         UserRole role = urr.userRole();
         User user;
-        if (role == UserRole.STAFF) {
-            user = userMapper.userToEntity(urr, new Staff());
-        } else if (role == UserRole.ADMIN) {
+        if (role == UserRole.ADMIN) {
             user = userMapper.userToEntity(urr, new Admin());
         } else {
-            throw new IllegalArgumentException("Unsupported role: " + role);
+            // All other roles use the Staff entity for warehouse context
+            user = userMapper.userToEntity(urr, new Staff());
         }
 
         String encodedPassword = passwordEncoder.encode(user.getPassword());

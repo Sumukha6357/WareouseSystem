@@ -70,7 +70,7 @@ export default function DriverView() {
 
                     <div className="grid grid-cols-2 gap-4">
                         <Button
-                            variant={isActive ? 'destructive' : 'primary'}
+                            variant={isActive ? 'secondary' : 'primary'}
                             className="w-full h-12"
                             onClick={toggleStatus}
                         >

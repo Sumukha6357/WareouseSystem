@@ -1,10 +1,10 @@
 'use client';
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Icon } from 'leaflet';
 import { Vehicle } from '@/services/VehicleService';
-import { Warehouse } from '@/services/WarehouseService'; // Assuming we have this, or we mock
+import { PickHeatmapResponse } from '@/services/AnalyticsService';
 import { useEffect, useState } from 'react';
 
 // Fix Leaflet default icon issue in Next.js
@@ -25,12 +25,31 @@ const vehicleIcon = new Icon({
 interface MapProps {
     vehicles: Vehicle[];
     warehouses?: any[]; // Allow partial
+    pickHeatmap?: PickHeatmapResponse[];
 }
 
 // Default center (San Francisco roughly, or adjustable)
 const DEFAULT_CENTER: [number, number] = [37.7749, -122.4194];
 
-export default function MapComponent({ vehicles, warehouses = [] }: MapProps) {
+// Helper to generate deterministic offsets for demo blocks based on ID
+const getBlockPosition = (blockId: string): [number, number] => {
+    // Simple hash to float
+    const hash = blockId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const latOffset = (hash % 20 - 10) * 0.001;
+    const lngOffset = (hash % 20 - 10) * 0.001;
+    return [DEFAULT_CENTER[0] + latOffset, DEFAULT_CENTER[1] + lngOffset];
+};
+
+const getCongestionColor = (level: string) => {
+    switch (level) {
+        case 'CRITICAL': return '#ef4444'; // Red-500
+        case 'HIGH': return '#f97316'; // Orange-500
+        case 'MEDIUM': return '#eab308'; // Yellow-500
+        default: return '#22c55e'; // Green-500
+    }
+};
+
+export default function MapComponent({ vehicles, warehouses = [], pickHeatmap = [] }: MapProps) {
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
@@ -65,6 +84,32 @@ export default function MapComponent({ vehicles, warehouses = [] }: MapProps) {
                         </Popup>
                     </Marker>
                 )
+            ))}
+
+            {/* Pick Heatmap (Active Blocks) */}
+            {pickHeatmap.map((heat) => (
+                <Circle
+                    key={heat.blockId}
+                    center={getBlockPosition(heat.blockId)}
+                    pathOptions={{
+                        color: getCongestionColor(heat.congestionLevel),
+                        fillColor: getCongestionColor(heat.congestionLevel),
+                        fillOpacity: 0.4
+                    }}
+                    radius={50 + (heat.activePicksCount * 10)} // Size grows with activity
+                >
+                    <Popup>
+                        <div className="p-1 text-center">
+                            <h3 className="font-bold text-gray-800">{heat.blockName}</h3>
+                            <p className="text-sm font-semibold mt-1">
+                                {heat.activePicksCount} Active Picks
+                            </p>
+                            <span className={`text-xs px-2 py-0.5 rounded-full text-white mt-1 inline-block`} style={{ backgroundColor: getCongestionColor(heat.congestionLevel) }}>
+                                {heat.congestionLevel} CONGESTION
+                            </span>
+                        </div>
+                    </Popup>
+                </Circle>
             ))}
 
             {/* Mock Warehouse Marker if none provided */}

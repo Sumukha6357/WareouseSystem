@@ -22,7 +22,7 @@ public class InventoryController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'WAREHOUSE_MANAGER', 'SUPERVISOR')")
     public ResponseEntity<ResponseStructure<InventoryResponse>> createInventory(@RequestBody InventoryRequest request) {
         InventoryResponse response = inventoryService.createInventory(request);
         ResponseStructure<InventoryResponse> structure = new ResponseStructure<>(
@@ -33,7 +33,7 @@ public class InventoryController {
     }
 
     @PutMapping("/{inventoryId}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'WAREHOUSE_MANAGER', 'SUPERVISOR')")
     public ResponseEntity<ResponseStructure<InventoryResponse>> updateInventory(
             @PathVariable String inventoryId,
             @RequestBody InventoryRequest request) {
@@ -46,7 +46,7 @@ public class InventoryController {
     }
 
     @PutMapping("/{inventoryId}/adjust")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPERVISOR', 'WAREHOUSE_MANAGER')")
     public ResponseEntity<ResponseStructure<InventoryResponse>> adjustStock(
             @PathVariable String inventoryId,
             @RequestParam Integer quantityChange) {

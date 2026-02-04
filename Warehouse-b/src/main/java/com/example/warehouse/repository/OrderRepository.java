@@ -18,4 +18,6 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     List<Order> findAllByOrderByCreatedAtDesc();
 
     List<Order> findByCustomerNameContainingIgnoreCaseOrderByCreatedAtDesc(String customerName);
+
+    long countByStatusNotIn(List<OrderStatus> statuses);
 }

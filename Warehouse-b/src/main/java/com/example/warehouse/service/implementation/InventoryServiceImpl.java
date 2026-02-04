@@ -10,6 +10,7 @@ import com.example.warehouse.repository.BlockRepository;
 import com.example.warehouse.repository.InventoryRepository;
 import com.example.warehouse.repository.ProductRepository;
 import com.example.warehouse.service.contract.InventoryService;
+import com.example.warehouse.exception.InsufficientCapacityException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,6 +48,10 @@ public class InventoryServiceImpl implements InventoryService {
                 request.getProductId(), request.getBlockId()).ifPresent(inv -> {
                     throw new RuntimeException("Inventory already exists for this product in this block");
                 });
+
+        if (block.getAvailableCapacity() < request.getQuantity()) {
+            throw new InsufficientCapacityException("Insufficient capacity in block: " + block.getName());
+        }
 
         Inventory inventory = new Inventory();
         inventory.setProduct(product);
@@ -122,9 +127,16 @@ public class InventoryServiceImpl implements InventoryService {
         Inventory inventory = inventoryRepository.findById(inventoryId)
                 .orElseThrow(() -> new RuntimeException("Inventory not found"));
 
-        int newQuantity = inventory.getQuantity() + quantityChange;
+        int quantityChangeVal = quantityChange != null ? quantityChange : 0;
+        int newQuantity = inventory.getQuantity() + quantityChangeVal;
+
         if (newQuantity < 0) {
             throw new RuntimeException("Cannot reduce stock below zero");
+        }
+
+        if (quantityChangeVal > 0 && inventory.getBlock().getAvailableCapacity() < quantityChangeVal) {
+            throw new InsufficientCapacityException(
+                    "Insufficient capacity in block: " + inventory.getBlock().getName());
         }
 
         inventory.setQuantity(newQuantity);

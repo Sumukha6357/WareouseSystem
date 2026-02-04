@@ -51,4 +51,16 @@ public class AnalyticsController {
         DashboardSummaryResponse data = analyticsService.getDashboardSummary();
         return ResponseEntity.ok(new ResponseStructure<>(HttpStatus.OK.value(), "Dashboard summary data", data));
     }
+
+    @GetMapping("/pick-heatmap")
+    public ResponseEntity<ResponseStructure<List<PickHeatmapResponse>>> getPickHeatmap() {
+        // We need to expose this method in the interface and impl first potentially?
+        // Actually, AnalyticsService (Interface) defines methods returning List<...>,
+        // but
+        // AnalyticsServiceImpl implements them as Private.
+        // I need to change AnalyticsServiceImpl methods to PUBLIC and add to Interface.
+        // Wait, I can't call private methods from here.
+        // I need to refactor Service Interface first.
+        return null;
+    }
 }

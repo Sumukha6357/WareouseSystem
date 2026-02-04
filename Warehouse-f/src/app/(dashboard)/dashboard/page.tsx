@@ -14,9 +14,6 @@ import {
     LogOut,
     Menu,
     X,
-    User as UserIcon,
-    Settings,
-    Bell,
     Package,
     Boxes,
     Activity,
@@ -25,7 +22,6 @@ import {
     Truck,
     Ship
 } from "lucide-react";
-import WarehouseManagement from "@/components/WarehouseManagement";
 import { Button } from "@/components/ui/Button";
 import UserManagementView from "@/components/UserManagementView";
 import WarehouseListView from "@/components/WarehouseListView";
@@ -49,16 +45,6 @@ export default function DashboardPage() {
     const [stats, setStats] = useState({ warehouses: 0, rooms: 0, blocks: 0, products: 0, inventories: 0, lowStock: 0 });
     const [profileData, setProfileData] = useState({ username: '', email: '' });
 
-    useEffect(() => {
-        if (!isLoading && !user) {
-            router.push('/login');
-        }
-        if (user) {
-            setProfileData({ username: user.username, email: user.email });
-            fetchStats();
-        }
-    }, [user, isLoading, router]);
-
     const fetchStats = async () => {
         try {
             const [warehousesRes, roomsRes, blocksRes, productsRes, inventoriesRes, lowStockRes] = await Promise.all([
@@ -81,6 +67,16 @@ export default function DashboardPage() {
             console.error('Failed to fetch stats', error);
         }
     };
+
+    useEffect(() => {
+        if (!isLoading && !user) {
+            router.push('/login');
+        }
+        if (user) {
+            setProfileData({ username: user.username, email: user.email });
+            fetchStats();
+        }
+    }, [user, isLoading, router]);
 
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();

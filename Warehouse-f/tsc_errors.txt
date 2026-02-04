@@ -1,0 +1,2 @@
+src/components/DriverView.tsx(73,29): error TS2322: Type '"primary" | "destructive"' is not assignable to type '"primary" | "secondary" | "outline" | "ghost" | undefined'.
+  Type '"destructive"' is not assignable to type '"primary" | "secondary" | "outline" | "ghost" | undefined'.

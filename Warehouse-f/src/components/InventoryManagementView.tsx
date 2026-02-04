@@ -71,7 +71,7 @@ export default function InventoryManagementView() {
             setInventories(inventoriesRes.data.data);
             setProducts(productsRes.data.data);
             setBlocks(blocksRes.data.data);
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast.error('Failed to fetch data');
         } finally {
             setLoading(false);
@@ -493,7 +493,7 @@ export default function InventoryManagementView() {
                     <div className="col-span-full py-20 bg-gray-50/50 rounded-3xl border-2 border-dashed border-gray-100 text-center">
                         <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                         <p className="text-gray-400 font-medium">No inventory allocations found</p>
-                        <p className="text-xs text-gray-400 mt-2">Click "Allocate Product" to get started</p>
+                        <p className="text-xs text-gray-400 mt-2">Click &quot;Allocate Product&quot; to get started</p>
                     </div>
                 )}
             </div>

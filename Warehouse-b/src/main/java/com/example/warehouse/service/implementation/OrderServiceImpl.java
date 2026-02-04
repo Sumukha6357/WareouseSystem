@@ -166,6 +166,10 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
+        if (order.getStatus() != OrderStatus.PICK_ASSIGNED) {
+            throw new RuntimeException("Order must be in PICK_ASSIGNED status before picking can be completed");
+        }
+
         // Verify all tasks are completed
         List<PickTask> tasks = pickTaskRepository.findByOrderOrderIdOrderByCreatedAtAsc(orderId);
         boolean allCompleted = tasks.stream()
