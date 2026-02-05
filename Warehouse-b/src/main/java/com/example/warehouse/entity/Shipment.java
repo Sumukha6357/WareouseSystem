@@ -70,4 +70,14 @@ public class Shipment {
 
     @Column(name = "delivered_at")
     private Instant deliveredAt;
+
+    @com.fasterxml.jackson.annotation.JsonProperty("orderId")
+    public String getOrderIdValue() {
+        return order != null ? order.getOrderId() : null;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("shipperId")
+    public String getShipperIdValue() {
+        return shipper != null ? shipper.getShipperId() : null;
+    }
 }

@@ -1,15 +1,13 @@
 package com.example.warehouse.dto.analytics;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 public class PickerWorkloadResponse {
     private String username;
-    private long activeTaskCount;
-    private long completedTodayCount;
+    private Long activeTaskCount;
+    private Long completedTodayCount;
     private String status; // IDLE, ACTIVE, OVERLOADED
 }

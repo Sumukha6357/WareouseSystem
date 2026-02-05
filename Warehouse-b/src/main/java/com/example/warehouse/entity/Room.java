@@ -18,6 +18,7 @@ public class Room {
 
     @ManyToOne
     @JoinColumn(name = "warehouse_id")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private WareHouse warehouse;
 
     @Id

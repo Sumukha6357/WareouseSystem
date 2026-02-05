@@ -23,6 +23,7 @@ public class PickTask {
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Order order;
 
     @ManyToOne

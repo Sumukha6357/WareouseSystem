@@ -27,6 +27,7 @@ public class Inventory {
 
     @ManyToOne
     @JoinColumn(name = "block_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Block block;
 
     @Column(name = "quantity", nullable = false)

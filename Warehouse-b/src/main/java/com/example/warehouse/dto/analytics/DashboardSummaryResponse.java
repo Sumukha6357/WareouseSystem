@@ -1,14 +1,11 @@
 package com.example.warehouse.dto.analytics;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
+import lombok.Builder;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 public class DashboardSummaryResponse {
     private ShipmentMetricsResponse shipmentMetrics;
     private FulfillmentMetricsResponse fulfillmentMetrics;
@@ -20,5 +17,4 @@ public class DashboardSummaryResponse {
     private List<PickerWorkloadResponse> pickerWorkload;
     private List<StockConfidenceResponse> stockConfidence;
     private List<ShipmentRiskResponse> shipmentRisk;
-
 }

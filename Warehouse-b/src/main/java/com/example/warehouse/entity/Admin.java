@@ -13,5 +13,6 @@ public class Admin extends User {
 
     @ManyToOne
     @JoinColumn(name = "warehouse_id", nullable = true)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private WareHouse warehouse;
 }

@@ -36,6 +36,12 @@ public class User {
     @Column(name = "user_role", nullable = false, updatable = false)
     private UserRole userRole;
 
+    @Column(name = "mobile")
+    private String mobile;
+
+    @Column(name = "profile_image")
+    private String profileImage;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

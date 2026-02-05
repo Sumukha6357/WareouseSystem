@@ -8,7 +8,7 @@ export interface Shipment {
     shipperName?: string;
     warehouseId: string;
     trackingNumber?: string;
-    status: 'CREATED' | 'PICKED' | 'PACKED' | 'WAITING_FOR_DRIVER' | 'IN_TRANSIT' | 'DELIVERED' | 'FAILED' | 'RETURNED';
+    status: 'CREATED' | 'PICKED' | 'PACKED' | 'READY_TO_DISPATCH' | 'DISPATCHED' | 'IN_TRANSIT' | 'DELIVERED' | 'FAILED' | 'RETURNED';
     createdAt: number;
     dispatchedAt?: number;
     deliveredAt?: number;
@@ -28,7 +28,7 @@ export interface CreateShipmentRequest {
 
 export const ShipmentService = {
     getAllShipments: async () => {
-        const response = await api.get<any>('/shipments/active');
+        const response = await api.get<any>('/shipments/all');
         return response.data.data;
     },
 

@@ -23,7 +23,9 @@ public class UserMapper {
         target.setUsername(source.username());
         target.setEmail(source.email());
         target.setPassword(source.password());
-        target.setUserRole(source.userRole());// problem
+        target.setUserRole(source.userRole());
+        target.setMobile(source.mobile());
+        target.setProfileImage(source.profileImage());
         return target;
     }
 
@@ -42,13 +44,19 @@ public class UserMapper {
                 user.getUserRole().name(),
                 user.getCreatedAt().toEpochMilli(),
                 user.getLastModifiedAt().toEpochMilli(),
-                warehouseResponse);
+                warehouseResponse,
+                user.getMobile(),
+                user.getProfileImage());
     }
 
     public User requestToEntity(UserRequest request, User target) {
         target.setUsername(request.username());
         target.setEmail(request.email());
-        target.setPassword(request.password());
+        if (request.password() != null && !request.password().isBlank()) {
+            target.setPassword(request.password());
+        }
+        target.setMobile(request.mobile());
+        target.setProfileImage(request.profileImage());
         return target;
     }
 

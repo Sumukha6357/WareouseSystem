@@ -1,15 +1,13 @@
 package com.example.warehouse.dto.analytics;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 public class FulfillmentMetricsResponse {
-    private Double avgPickTimeMinutes;
-    private Double avgPackTimeMinutes;
-    private Double avgDispatchTimeMinutes;
-    private Double avgTotalFulfillmentTimeMinutes;
+    private Integer avgPickTimeMinutes;
+    private Integer avgPackTimeMinutes;
+    private Integer avgDispatchTimeMinutes;
+    private Integer avgTotalFulfillmentTimeMinutes;
 }

@@ -28,12 +28,13 @@ const AnalyticsDashboardView: React.FC = () => {
                 AnalyticsService.getDashboardSummary(),
                 SystemHealthService.getStats()
             ]);
+
             setData(result);
             setHealth(healthStats);
             setError(null);
         } catch (err) {
+            console.error("Error fetching analytics:", err);
             setError('Failed to load analytics data');
-            console.error(err);
         } finally {
             setLoading(false);
         }
@@ -45,9 +46,9 @@ const AnalyticsDashboardView: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
-    if (loading && !data) return <div className="p-8 text-center">Loading analytics...</div>;
-    if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
-    if (!data) return null;
+    if (loading && !data) return <div className="p-8 text-center text-white">Loading analytics...</div>;
+    if (error) return <div className="p-8 text-center text-red-500 font-bold">Error: {error}</div>;
+    if (!data) return <div className="p-8 text-center text-yellow-500">No Data Available.</div>;
 
     return (
         <div className="p-8 space-y-10 bg-background min-h-screen animate-in fade-in duration-700">

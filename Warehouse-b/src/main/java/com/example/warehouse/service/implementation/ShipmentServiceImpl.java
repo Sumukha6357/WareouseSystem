@@ -50,6 +50,20 @@ public class ShipmentServiceImpl implements ShipmentService {
         if (request.getShipperId() != null) {
             shipper = shipperRepository.findById(request.getShipperId())
                     .orElseThrow(() -> new ResourceNotFoundException("Shipper not found: " + request.getShipperId()));
+        } else {
+            // Auto-assign the first active shipper if none selected
+            shipper = shipperRepository.findByActiveTrue().stream().findFirst()
+                    .orElseGet(() -> {
+                        // Create a default shipper if none exist
+                        Shipper newShipper = new Shipper();
+                        newShipper.setName("In-House Logistics");
+                        newShipper.setType(ShipperType.INTERNAL);
+                        newShipper.setServiceLevel(ServiceLevel.STANDARD);
+                        newShipper.setActive(true);
+                        newShipper.setCreatedAt(Instant.now());
+                        newShipper.setLastModifiedAt(Instant.now());
+                        return shipperRepository.save(newShipper);
+                    });
         }
 
         Shipment shipment = new Shipment();
@@ -120,6 +134,11 @@ public class ShipmentServiceImpl implements ShipmentService {
     @Override
     public List<Shipment> getActiveShipments() {
         return shipmentRepository.findActiveShipments();
+    }
+
+    @Override
+    public List<Shipment> getAllShipments() {
+        return shipmentRepository.findAllByOrderByCreatedAtDesc();
     }
 
     @Override

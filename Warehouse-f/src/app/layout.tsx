@@ -19,6 +19,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "WarehouseMS - Warehouse Management System",
   description: "Comprehensive warehouse management solution",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

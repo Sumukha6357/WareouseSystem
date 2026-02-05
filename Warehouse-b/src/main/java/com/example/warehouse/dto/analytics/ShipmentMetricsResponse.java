@@ -1,15 +1,13 @@
 package com.example.warehouse.dto.analytics;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 public class ShipmentMetricsResponse {
-    private Long totalShipments;
-    private Long shipmentsInTransit;
-    private Long deliveredToday;
-    private Long failedShipments;
+    private long totalShipments;
+    private long shipmentsInTransit;
+    private long deliveredToday;
+    private long failedShipments;
 }

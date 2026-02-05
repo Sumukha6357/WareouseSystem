@@ -17,6 +17,7 @@ public class ShipmentItem {
 
     @ManyToOne
     @JoinColumn(name = "shipment_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Shipment shipment;
 
     @ManyToOne

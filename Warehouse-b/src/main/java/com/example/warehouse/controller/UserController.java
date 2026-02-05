@@ -83,7 +83,20 @@ public class UserController {
     public ResponseEntity<ResponseStructure<UserResponse>> adminUpdateUser(
             @PathVariable String userId,
             @RequestBody AdminUserUpdateRequest request) {
-        UserResponse userResponse = userService.adminUpdateUser(request);
+
+        // Ensure the userId from the path is used in the request object if missing
+        AdminUserUpdateRequest updatedRequest = request;
+        if (request.userId() == null || request.userId().isBlank()) {
+            updatedRequest = new AdminUserUpdateRequest(
+                    userId,
+                    request.username(),
+                    request.email(),
+                    request.userRole(),
+                    request.mobile(),
+                    request.profileImage());
+        }
+
+        UserResponse userResponse = userService.adminUpdateUser(updatedRequest);
         ResponseStructure<UserResponse> responseStructure = new ResponseStructure<>(
                 HttpStatus.OK.value(),
                 "User Updated Successfully", userResponse);

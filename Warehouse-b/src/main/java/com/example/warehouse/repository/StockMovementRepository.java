@@ -34,4 +34,12 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, St
 
     // Find movements by reference
     List<StockMovement> findByReferenceTypeAndReferenceIdOrderByCreatedAtDesc(String referenceType, String referenceId);
+
+    // Analytics: Top Movers (High turnover products)
+    @Query("SELECT new com.example.warehouse.dto.analytics.StockTurnoverResponse(sm.product.productId, sm.product.name, COUNT(sm), 0.0) "
+            +
+            "FROM StockMovement sm " +
+            "GROUP BY sm.product.productId, sm.product.name " +
+            "ORDER BY COUNT(sm) DESC")
+    List<com.example.warehouse.dto.analytics.StockTurnoverResponse> findTopMovers();
 }

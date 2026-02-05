@@ -36,6 +36,8 @@ interface User {
     createdAt: number;
     lastModifiedAt: number;
     warehouse?: Warehouse | null;
+    mobile?: string;
+    profileImage?: string;
 }
 
 interface AuthContextType {

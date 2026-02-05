@@ -137,9 +137,7 @@ export default function RegisterPage() {
                                     <option value="WAREHOUSE_MANAGER">🏢 Warehouse Manager — Operations Control</option>
                                     <option value="PICKER">� Picker — Order Fulfillment</option>
                                     <option value="PACKER">� Packer — Packaging Operations</option>
-                                    <option value="SUPERVISOR">� Supervisor — Team Oversight</option>
                                     <option value="EXTERNAL_SHIPPER">� External Shipper — Delivery Partner</option>
-                                    <option value="AUDITOR">� Auditor — Compliance & Review</option>
                                 </select>
                                 <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-muted">
                                     ▼

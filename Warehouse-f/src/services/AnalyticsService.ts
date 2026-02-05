@@ -1,6 +1,4 @@
-import axios from 'axios';
-
-const API_URL = 'http://localhost:8080/analytics';
+import api from '@/lib/api';
 
 export interface StockTurnoverResponse {
     productId: string;
@@ -90,28 +88,27 @@ export interface ShipmentRiskResponse {
 
 export const AnalyticsService = {
     getDashboardSummary: async (): Promise<DashboardSummaryResponse> => {
-        const response = await axios.get<{ data: DashboardSummaryResponse }>(`${API_URL}/dashboard-summary`);
-        // Handle Wrapped ResponseStructure
+        const response = await api.get<{ data: DashboardSummaryResponse }>('/analytics/dashboard-summary');
         return response.data.data;
     },
 
     getStockTurnover: async (): Promise<StockTurnoverResponse[]> => {
-        const response = await axios.get<{ data: StockTurnoverResponse[] }>(`${API_URL}/stock-turnover`);
+        const response = await api.get<{ data: StockTurnoverResponse[] }>('/analytics/stock-turnover');
         return response.data.data;
     },
 
     getBlockUtilization: async (): Promise<BlockUtilizationResponse[]> => {
-        const response = await axios.get<{ data: BlockUtilizationResponse[] }>(`${API_URL}/block-utilization`);
+        const response = await api.get<{ data: BlockUtilizationResponse[] }>('/analytics/block-utilization');
         return response.data.data;
     },
 
     getFulfillmentMetrics: async (): Promise<FulfillmentMetricsResponse> => {
-        const response = await axios.get<{ data: FulfillmentMetricsResponse }>(`${API_URL}/fulfillment-metrics`);
+        const response = await api.get<{ data: FulfillmentMetricsResponse }>('/analytics/fulfillment-metrics');
         return response.data.data;
     },
 
     getShipmentMetrics: async (): Promise<ShipmentMetricsResponse> => {
-        const response = await axios.get<{ data: ShipmentMetricsResponse }>(`${API_URL}/shipment-metrics`);
+        const response = await api.get<{ data: ShipmentMetricsResponse }>('/analytics/shipment-metrics');
         return response.data.data;
     }
 };

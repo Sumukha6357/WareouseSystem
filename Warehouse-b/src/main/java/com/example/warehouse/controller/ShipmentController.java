@@ -22,8 +22,15 @@ public class ShipmentController {
         this.shipmentService = shipmentService;
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<ResponseStructure<List<Shipment>>> getAllShipments() {
+        List<Shipment> shipments = shipmentService.getAllShipments();
+        return ResponseEntity.ok(
+                new ResponseStructure<>(HttpStatus.OK.value(), "All shipments retrieved successfully", shipments));
+    }
+
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF', 'EXTERNAL_SHIPPER')")
     public ResponseEntity<ResponseStructure<Shipment>> createShipment(@RequestBody CreateShipmentRequest request) {
         Shipment shipment = shipmentService.createShipment(request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -58,7 +65,7 @@ public class ShipmentController {
     }
 
     @PutMapping("/{shipmentId}/status")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF', 'EXTERNAL_SHIPPER')")
     public ResponseEntity<ResponseStructure<Shipment>> updateStatus(
             @PathVariable String shipmentId,
             @RequestParam ShipmentStatus status,

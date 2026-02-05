@@ -1,18 +1,18 @@
 package com.example.warehouse.controller;
 
 import com.example.warehouse.dto.analytics.*;
-import com.example.warehouse.dto.wrapper.ResponseStructure;
 import com.example.warehouse.service.contract.AnalyticsService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/analytics")
+@org.springframework.web.bind.annotation.CrossOrigin("*")
 public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
@@ -21,46 +21,48 @@ public class AnalyticsController {
         this.analyticsService = analyticsService;
     }
 
+    @GetMapping("/dashboard-summary")
+    public ResponseEntity<Map<String, DashboardSummaryResponse>> getDashboardSummary() {
+        return ResponseEntity.ok(Map.of("data", analyticsService.getDashboardSummary()));
+    }
+
     @GetMapping("/stock-turnover")
-    public ResponseEntity<ResponseStructure<List<StockTurnoverResponse>>> getStockTurnover() {
-        List<StockTurnoverResponse> data = analyticsService.getStockTurnover();
-        return ResponseEntity.ok(new ResponseStructure<>(HttpStatus.OK.value(), "Stock turnover metrics data", data));
+    public ResponseEntity<Map<String, List<StockTurnoverResponse>>> getStockTurnover() {
+        return ResponseEntity.ok(Map.of("data", analyticsService.getStockTurnover()));
     }
 
     @GetMapping("/block-utilization")
-    public ResponseEntity<ResponseStructure<List<BlockUtilizationResponse>>> getBlockUtilization() {
-        List<BlockUtilizationResponse> data = analyticsService.getBlockUtilization();
-        return ResponseEntity
-                .ok(new ResponseStructure<>(HttpStatus.OK.value(), "Block utilization metrics data", data));
+    public ResponseEntity<Map<String, List<BlockUtilizationResponse>>> getBlockUtilization() {
+        return ResponseEntity.ok(Map.of("data", analyticsService.getBlockUtilization()));
     }
 
     @GetMapping("/fulfillment-metrics")
-    public ResponseEntity<ResponseStructure<FulfillmentMetricsResponse>> getFulfillmentMetrics() {
-        FulfillmentMetricsResponse data = analyticsService.getFulfillmentMetrics();
-        return ResponseEntity.ok(new ResponseStructure<>(HttpStatus.OK.value(), "Fulfillment metrics data", data));
+    public ResponseEntity<Map<String, FulfillmentMetricsResponse>> getFulfillmentMetrics() {
+        return ResponseEntity.ok(Map.of("data", analyticsService.getFulfillmentMetrics()));
     }
 
     @GetMapping("/shipment-metrics")
-    public ResponseEntity<ResponseStructure<ShipmentMetricsResponse>> getShipmentMetrics() {
-        ShipmentMetricsResponse data = analyticsService.getShipmentMetrics();
-        return ResponseEntity.ok(new ResponseStructure<>(HttpStatus.OK.value(), "Shipment metrics data", data));
-    }
-
-    @GetMapping("/dashboard-summary")
-    public ResponseEntity<ResponseStructure<DashboardSummaryResponse>> getDashboardSummary() {
-        DashboardSummaryResponse data = analyticsService.getDashboardSummary();
-        return ResponseEntity.ok(new ResponseStructure<>(HttpStatus.OK.value(), "Dashboard summary data", data));
+    public ResponseEntity<Map<String, ShipmentMetricsResponse>> getShipmentMetrics() {
+        return ResponseEntity.ok(Map.of("data", analyticsService.getShipmentMetrics()));
     }
 
     @GetMapping("/pick-heatmap")
-    public ResponseEntity<ResponseStructure<List<PickHeatmapResponse>>> getPickHeatmap() {
-        // We need to expose this method in the interface and impl first potentially?
-        // Actually, AnalyticsService (Interface) defines methods returning List<...>,
-        // but
-        // AnalyticsServiceImpl implements them as Private.
-        // I need to change AnalyticsServiceImpl methods to PUBLIC and add to Interface.
-        // Wait, I can't call private methods from here.
-        // I need to refactor Service Interface first.
-        return null;
+    public ResponseEntity<Map<String, List<PickHeatmapResponse>>> getPickHeatmap() {
+        return ResponseEntity.ok(Map.of("data", analyticsService.getPickHeatmap()));
+    }
+
+    @GetMapping("/picker-workload")
+    public ResponseEntity<Map<String, List<PickerWorkloadResponse>>> getPickerWorkload() {
+        return ResponseEntity.ok(Map.of("data", analyticsService.getPickerWorkload()));
+    }
+
+    @GetMapping("/stock-confidence")
+    public ResponseEntity<Map<String, List<StockConfidenceResponse>>> getStockConfidence() {
+        return ResponseEntity.ok(Map.of("data", analyticsService.getStockConfidence()));
+    }
+
+    @GetMapping("/shipment-risk")
+    public ResponseEntity<Map<String, List<ShipmentRiskResponse>>> getShipmentRisk() {
+        return ResponseEntity.ok(Map.of("data", analyticsService.getShipmentRisk()));
     }
 }

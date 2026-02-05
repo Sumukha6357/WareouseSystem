@@ -18,6 +18,8 @@ public interface ShipmentService {
 
     List<Shipment> getActiveShipments();
 
+    List<Shipment> getAllShipments();
+
     Shipment updateShipmentStatus(String shipmentId, ShipmentStatus status, String location, String notes);
 
     Shipment assignShipper(String shipmentId, String shipperId);

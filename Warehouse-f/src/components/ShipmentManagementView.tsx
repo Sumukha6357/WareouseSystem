@@ -180,9 +180,26 @@ export default function ShipmentManagementView() {
                                         </Button>
                                     )}
                                     {shipment.status === 'PACKED' && (
-                                        <Button className="flex-1 lg:flex-none py-6 px-10 text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/20" onClick={() => handleStatusUpdate(shipment.shipmentId, 'DISPATCHED')}>
-                                            Finalize Dispatch
+                                        <Button className="flex-1 lg:flex-none py-6 px-10 text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/20" onClick={() => handleStatusUpdate(shipment.shipmentId, 'READY_TO_DISPATCH')}>
+                                            Mark Ready for Dispatch
                                             <ArrowRight className="w-4 h-4 ml-3" />
+                                        </Button>
+                                    )}
+                                    {shipment.status === 'READY_TO_DISPATCH' && (
+                                        <Button className="flex-1 lg:flex-none py-6 px-10 text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white" onClick={() => handleStatusUpdate(shipment.shipmentId, 'DISPATCHED')}>
+                                            Finalize Dispatch
+                                            <Truck className="w-4 h-4 ml-3" />
+                                        </Button>
+                                    )}
+                                    {shipment.status === 'DISPATCHED' && (
+                                        <Button className="flex-1 lg:flex-none py-6 px-10 text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white" onClick={() => handleStatusUpdate(shipment.shipmentId, 'IN_TRANSIT')}>
+                                            Shipment in Transit
+                                            <Truck className="w-4 h-4 ml-3" />
+                                        </Button>
+                                    )}
+                                    {shipment.status === 'IN_TRANSIT' && (
+                                        <Button className="flex-1 lg:flex-none py-6 px-10 text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => handleStatusUpdate(shipment.shipmentId, 'DELIVERED')}>
+                                            Confirm Delivery
                                         </Button>
                                     )}
                                 </div>

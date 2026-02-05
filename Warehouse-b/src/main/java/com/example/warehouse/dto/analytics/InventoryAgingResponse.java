@@ -1,16 +1,14 @@
 package com.example.warehouse.dto.analytics;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 public class InventoryAgingResponse {
     private String inventoryId;
     private String productName;
     private String blockName;
-    private int quantity;
-    private long daysInWarehouse;
+    private Integer quantity;
+    private Long daysInWarehouse;
 }

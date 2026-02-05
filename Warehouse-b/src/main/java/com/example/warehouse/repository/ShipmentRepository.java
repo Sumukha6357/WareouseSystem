@@ -26,4 +26,11 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
     List<Shipment> findActiveShipments();
 
     List<Shipment> findAllByOrderByCreatedAtDesc();
+
+    long countByStatus(ShipmentStatus status);
+
+    long countByStatusIn(List<ShipmentStatus> statuses);
+
+    @Query("SELECT COUNT(s) FROM Shipment s WHERE s.status = 'DELIVERED' AND s.deliveredAt >= ?1")
+    long countDeliveredSince(java.time.Instant since);
 }

@@ -22,6 +22,7 @@ public class ShipmentEvent {
 
     @ManyToOne
     @JoinColumn(name = "shipment_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Shipment shipment;
 
     @Enumerated(EnumType.STRING)

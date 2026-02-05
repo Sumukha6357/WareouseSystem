@@ -61,8 +61,13 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundByEmail("User is not Authorized"));
 
         User user = userMapper.requestToEntity(request, exUser);
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+
+        // Only update password if a new one is provided in the request
+        if (request.password() != null && !request.password().isBlank()) {
+            String encodedPassword = passwordEncoder.encode(request.password());
+            user.setPassword(encodedPassword);
+        }
+
         userRepository.save(user);
         return userMapper.userToResponse(user);
     }
@@ -75,6 +80,8 @@ public class UserServiceImpl implements UserService {
         // Update basic fields
         user.setUsername(request.username());
         user.setEmail(request.email());
+        user.setMobile(request.mobile());
+        user.setProfileImage(request.profileImage());
 
         // Update role if changed
         if (request.userRole() != null && !request.userRole().equals(user.getUserRole().name())) {
@@ -92,6 +99,8 @@ public class UserServiceImpl implements UserService {
             newUser.setUserId(user.getUserId());
             newUser.setUsername(request.username());
             newUser.setEmail(request.email());
+            newUser.setMobile(request.mobile());
+            newUser.setProfileImage(request.profileImage());
             newUser.setPassword(user.getPassword());
             newUser.setUserRole(newRole);
             newUser.setCreatedAt(user.getCreatedAt());

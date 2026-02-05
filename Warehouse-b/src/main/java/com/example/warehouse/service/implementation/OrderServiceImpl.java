@@ -11,6 +11,7 @@ import com.example.warehouse.entity.*;
 import com.example.warehouse.repository.*;
 import com.example.warehouse.service.contract.OrderService;
 import com.example.warehouse.service.contract.StockMovementService;
+import com.example.warehouse.service.contract.ShipmentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,17 +29,20 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final InventoryRepository inventoryRepository;
     private final StockMovementService stockMovementService;
+    private final ShipmentService shipmentService;
 
     public OrderServiceImpl(OrderRepository orderRepository,
             PickTaskRepository pickTaskRepository,
             ProductRepository productRepository,
             InventoryRepository inventoryRepository,
-            StockMovementService stockMovementService) {
+            StockMovementService stockMovementService,
+            ShipmentService shipmentService) {
         this.orderRepository = orderRepository;
         this.pickTaskRepository = pickTaskRepository;
         this.productRepository = productRepository;
         this.inventoryRepository = inventoryRepository;
         this.stockMovementService = stockMovementService;
+        this.shipmentService = shipmentService;
     }
 
     @Override
@@ -209,8 +213,17 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        if (order.getStatus() != OrderStatus.PACKED) {
+        if (order.getStatus() != OrderStatus.PACKED && order.getStatus() != OrderStatus.DISPATCHED) {
+            // Allow idempotent retry if already dispatched, otherwise must be PACKED
+            if (order.getStatus() == OrderStatus.DISPATCHED) {
+                return mapToOrderResponse(order);
+            }
             throw new RuntimeException("Order must be PACKED before dispatching");
+        }
+
+        // Prevent double dispatch if somehow bypassed
+        if (order.getStatus() == OrderStatus.DISPATCHED) {
+            return mapToOrderResponse(order);
         }
 
         order.setStatus(OrderStatus.DISPATCHED);
@@ -234,6 +247,26 @@ public class OrderServiceImpl implements OrderService {
             } catch (Exception e) {
                 System.err.println("Failed to record outbound movement: " + e.getMessage());
             }
+        }
+
+        // AUTO-CREATE SHIPMENT
+        try {
+            com.example.warehouse.dto.request.CreateShipmentRequest shipmentRequest = new com.example.warehouse.dto.request.CreateShipmentRequest();
+            shipmentRequest.setOrderId(orderId);
+            shipmentRequest
+                    .setTrackingNumber("TRK-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+            // Implicitly assigning a default shipper or null if not selected yet
+            com.example.warehouse.entity.Shipment shipment = shipmentService.createShipment(shipmentRequest);
+
+            // Immediately mark shipment as DISPATCHED to match Order status
+            shipmentService.updateShipmentStatus(
+                    shipment.getShipmentId(),
+                    com.example.warehouse.entity.ShipmentStatus.DISPATCHED,
+                    "Warehouse",
+                    "Auto-dispatched with Order");
+        } catch (Exception e) {
+            System.err.println("Failed to auto-create shipment: " + e.getMessage());
+            // Don't fail the order dispatch if shipment creation fails, but log it critical
         }
 
         return mapToOrderResponse(updatedOrder);

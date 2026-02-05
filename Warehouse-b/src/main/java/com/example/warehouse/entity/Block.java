@@ -17,6 +17,7 @@ public class Block {
 
     @ManyToOne
     @JoinColumn(name = "room_id")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Room room;
 
     @Column(name = "name")

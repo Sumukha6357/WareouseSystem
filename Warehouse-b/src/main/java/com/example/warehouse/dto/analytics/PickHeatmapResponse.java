@@ -1,15 +1,13 @@
 package com.example.warehouse.dto.analytics;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 public class PickHeatmapResponse {
     private String blockId;
     private String blockName;
-    private long activePicksCount;
+    private Long activePicksCount;
     private String congestionLevel; // LOW, MEDIUM, HIGH, CRITICAL
 }
