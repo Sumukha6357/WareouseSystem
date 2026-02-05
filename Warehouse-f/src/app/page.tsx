@@ -135,15 +135,21 @@ export default function Home() {
                   className="relative group animate-slide-up"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="glass-card p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full border-2 border-transparent hover:border-primary/30">
+                  <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border-2 border-slate-100 dark:border-slate-800 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 h-full shadow-lg overflow-hidden relative group">
                     <dt>
                       <div className={`flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br ${feature.gradient} text-white shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
                         <feature.icon className="h-8 w-8" aria-hidden="true" />
                       </div>
-                      <p className="mt-6 text-xl leading-6 font-black !text-black dark:!text-white">{feature.name}</p>
+                      <p className="mt-6 text-xl leading-6 font-black">
+                        <span className="text-slate-950 dark:text-white">
+                          {feature.name}
+                        </span>
+                      </p>
                     </dt>
-                    <dd className="mt-3 text-base !text-gray-900 dark:!text-gray-100 font-extrabold leading-relaxed">
-                      {feature.description}
+                    <dd className="mt-4 text-base leading-relaxed font-bold">
+                      <span className="text-slate-700 dark:text-slate-200">
+                        {feature.description}
+                      </span>
                     </dd>
                   </div>
                 </div>
@@ -169,9 +175,11 @@ export default function Home() {
           </p>
           {!user && (
             <Link href="/register">
-              <Button variant="outline" size="lg" className="!bg-white !text-black !border-none hover:!bg-gray-100 font-black py-4 px-10 rounded-2xl shadow-2xl hover:shadow-white/20 transition-all duration-300 hover:scale-105">
-                Start Free Trial
-                <ArrowRight className="ml-2 h-5 w-5" />
+              <Button variant="outline" size="lg" className="!bg-white !border-none hover:!bg-gray-100 py-4 px-10 rounded-2xl shadow-2xl transition-all duration-300 hover:scale-105">
+                <span className="text-slate-950 font-black flex items-center">
+                  Start Free Trial
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </span>
               </Button>
             </Link>
           )}
