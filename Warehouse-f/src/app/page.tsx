@@ -142,7 +142,7 @@ export default function Home() {
                       </div>
                       <p className="mt-6 text-xl leading-6 font-black text-gray-900 dark:text-white">{feature.name}</p>
                     </dt>
-                    <dd className="mt-3 text-base text-gray-500 dark:text-slate-400 font-medium leading-relaxed">
+                    <dd className="mt-3 text-base text-gray-700 dark:text-gray-300 font-semibold leading-relaxed">
                       {feature.description}
                     </dd>
                   </div>
@@ -169,7 +169,7 @@ export default function Home() {
           </p>
           {!user && (
             <Link href="/register">
-              <Button size="lg" className="bg-white text-slate-900 hover:bg-gray-100 font-bold py-4 px-10 rounded-2xl shadow-2xl hover:shadow-white/20 transition-all duration-300 hover:scale-105">
+              <Button variant="outline" size="lg" className="bg-white !text-slate-900 border-none hover:bg-gray-100 font-black py-4 px-10 rounded-2xl shadow-2xl hover:shadow-white/20 transition-all duration-300 hover:scale-105">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
