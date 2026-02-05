@@ -5,6 +5,7 @@ import ConditionalNavbar from "@/components/ConditionalNavbar";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import ToastProvider from "@/components/ToastProvider";
+import ConditionalFooter from "@/components/ConditionalFooter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default function RootLayout({
               <main className="flex-grow">
                 {children}
               </main>
+              <ConditionalFooter />
             </AuthProvider>
           </div>
         </ThemeProvider>
