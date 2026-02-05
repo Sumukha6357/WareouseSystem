@@ -135,14 +135,14 @@ export default function Home() {
                   className="relative group animate-slide-up"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="glass-card p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full border-2 border-transparent hover:border-primary/20">
+                  <div className="glass-card p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full border-2 border-transparent hover:border-primary/30">
                     <dt>
                       <div className={`flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br ${feature.gradient} text-white shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
                         <feature.icon className="h-8 w-8" aria-hidden="true" />
                       </div>
                       <p className="mt-6 text-xl leading-6 font-black text-gray-900 dark:text-white">{feature.name}</p>
                     </dt>
-                    <dd className="mt-3 text-base text-gray-600 dark:text-gray-300 font-medium leading-relaxed">
+                    <dd className="mt-3 text-base text-gray-500 dark:text-slate-400 font-medium leading-relaxed">
                       {feature.description}
                     </dd>
                   </div>
@@ -169,7 +169,7 @@ export default function Home() {
           </p>
           {!user && (
             <Link href="/register">
-              <Button size="lg" className="bg-white text-primary hover:bg-gray-100 font-bold py-4 px-10 rounded-2xl shadow-2xl hover:shadow-white/20 transition-all duration-300 hover:scale-105">
+              <Button size="lg" className="bg-white text-slate-900 hover:bg-gray-100 font-bold py-4 px-10 rounded-2xl shadow-2xl hover:shadow-white/20 transition-all duration-300 hover:scale-105">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
