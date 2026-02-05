@@ -140,9 +140,9 @@ export default function Home() {
                       <div className={`flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br ${feature.gradient} text-white shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
                         <feature.icon className="h-8 w-8" aria-hidden="true" />
                       </div>
-                      <p className="mt-6 text-xl leading-6 font-black text-slate-950 dark:text-white">{feature.name}</p>
+                      <p className="mt-6 text-xl leading-6 font-black text-[#020617] dark:text-white">{feature.name}</p>
                     </dt>
-                    <dd className="mt-3 text-base text-slate-800 dark:text-gray-200 font-bold leading-relaxed">
+                    <dd className="mt-3 text-base text-[#334155] dark:text-slate-300 font-bold leading-relaxed">
                       {feature.description}
                     </dd>
                   </div>
@@ -169,7 +169,7 @@ export default function Home() {
           </p>
           {!user && (
             <Link href="/register">
-              <Button variant="outline" size="lg" className="bg-white !text-slate-900 border-none hover:bg-gray-100 font-black py-4 px-10 rounded-2xl shadow-2xl hover:shadow-white/20 transition-all duration-300 hover:scale-105">
+              <Button variant="outline" size="lg" className="!bg-white !text-[#020617] !border-none hover:!bg-gray-100 font-black py-4 px-10 rounded-2xl shadow-2xl hover:shadow-white/20 transition-all duration-300 hover:scale-105">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
