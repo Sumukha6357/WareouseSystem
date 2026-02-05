@@ -140,9 +140,9 @@ export default function Home() {
                       <div className={`flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br ${feature.gradient} text-white shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
                         <feature.icon className="h-8 w-8" aria-hidden="true" />
                       </div>
-                      <p className="mt-6 text-xl leading-6 font-black text-gray-900 dark:text-white">{feature.name}</p>
+                      <p className="mt-6 text-xl leading-6 font-black text-slate-950 dark:text-white">{feature.name}</p>
                     </dt>
-                    <dd className="mt-3 text-base text-gray-700 dark:text-gray-300 font-semibold leading-relaxed">
+                    <dd className="mt-3 text-base text-slate-800 dark:text-gray-200 font-bold leading-relaxed">
                       {feature.description}
                     </dd>
                   </div>
