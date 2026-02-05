@@ -243,7 +243,6 @@ export default function DashboardPage() {
         { id: 'shipments', label: 'Shipments', icon: Ship, roles: ['ADMIN', 'STAFF', 'WAREHOUSE_MANAGER', 'EXTERNAL_SHIPPER', 'PACKER'] },
         { id: 'activity', label: 'Activity Feed', icon: Activity, roles: ['ADMIN', 'STAFF', 'WAREHOUSE_MANAGER'] },
         { id: 'reports', label: 'Reports & Analytics', icon: BarChart3, roles: ['ADMIN', 'WAREHOUSE_MANAGER'] },
-        { id: 'insights', label: 'Warehouse Insights', icon: LightbulbIcon, roles: ['ADMIN', 'WAREHOUSE_MANAGER', 'STAFF'] },
         { id: 'users', label: 'User Directory', icon: UsersIcon, roles: ['ADMIN'] },
     ];
 
