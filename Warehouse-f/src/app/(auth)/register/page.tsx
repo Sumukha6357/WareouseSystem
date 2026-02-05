@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Box, Lock, Mail, User } from 'lucide-react';
+import { Box, Lock, Mail, User, Eye, EyeOff, Shield, Briefcase } from 'lucide-react';
 import api from '@/lib/api';
 
 export default function RegisterPage() {
@@ -14,10 +13,11 @@ export default function RegisterPage() {
         username: '',
         email: '',
         password: '',
-        userRole: 'ADMIN', // Default role for now
+        userRole: 'STAFF',
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,7 +30,6 @@ export default function RegisterPage() {
 
         try {
             await api.post('/register', formData);
-            // Redirect to login on success
             router.push('/login?registered=true');
         } catch (err: any) {
             setError(err.message || 'Registration failed');
@@ -40,60 +39,68 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="flex justify-center">
-                    <Box className="h-12 w-12 text-indigo-600" />
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-6 animate-in fade-in duration-700">
+            <div className="w-full max-w-xl">
+                {/* Header */}
+                <div className="text-center mb-12 animate-in slide-in-from-top duration-500">
+                    <div className="inline-flex items-center justify-center p-6 bg-gradient-to-br from-primary to-primary/80 rounded-[2.5rem] shadow-2xl shadow-primary/30 mb-8 group hover:scale-110 transition-transform duration-500">
+                        <Box className="h-14 w-14 text-white animate-pulse" strokeWidth={2.5} />
+                    </div>
+                    <h1 className="text-5xl font-black text-sharp tracking-tighter mb-4">
+                        Join the System
+                    </h1>
+                    <p className="text-sm font-medium text-muted">
+                        Already have access?{' '}
+                        <Link
+                            href="/login"
+                            className="text-primary font-black hover:underline underline-offset-4 transition-all"
+                        >
+                            Sign in to your account
+                        </Link>
+                    </p>
                 </div>
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                    Create your account
-                </h2>
-                <p className="mt-2 text-center text-sm text-gray-600">
-                    Or{' '}
-                    <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-                        sign in to your existing account
-                    </Link>
-                </p>
-            </div>
 
-            <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                    <form className="space-y-6" onSubmit={handleSubmit}>
-
+                {/* Form Card */}
+                <div className="bg-card rounded-[4rem] p-12 border-2 border-card-border shadow-2xl animate-in zoom-in-95 duration-500">
+                    <form onSubmit={handleSubmit} className="space-y-8">
                         {error && (
-                            <div className="rounded-md bg-red-50 p-4">
-                                <div className="flex">
-                                    <div className="ml-3">
-                                        <h3 className="text-sm font-medium text-red-800">{error}</h3>
-                                    </div>
-                                </div>
+                            <div className="bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-3xl p-6 border-2 border-red-200 dark:border-red-800 animate-shake">
+                                <p className="text-sm font-black text-red-800 dark:text-red-300 uppercase tracking-wider">
+                                    ⚠️ {error}
+                                </p>
                             </div>
                         )}
 
-                        <div>
-                            <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
-                            <div className="mt-1 relative rounded-md shadow-sm">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <User className="h-5 w-5 text-gray-400" />
+                        {/* Username */}
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black text-muted uppercase tracking-[0.2em] block ml-2">
+                                Username
+                            </label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                                    <User className="h-5 w-5 text-muted group-focus-within:text-primary transition-colors" />
                                 </div>
                                 <input
                                     id="username"
                                     name="username"
                                     type="text"
                                     required
-                                    className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2"
-                                    placeholder="johndoe"
+                                    className="w-full rounded-[2rem] border-2 border-input-border bg-background py-5 pl-14 pr-6 focus:ring-8 focus:ring-primary/10 focus:border-primary transition-all font-bold text-sharp outline-none placeholder:text-muted/40 placeholder:font-medium"
+                                    placeholder="Enter unique username"
                                     value={formData.username}
                                     onChange={handleChange}
                                 />
                             </div>
                         </div>
 
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email address</label>
-                            <div className="mt-1 relative rounded-md shadow-sm">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Mail className="h-5 w-5 text-gray-400" />
+                        {/* Email */}
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black text-muted uppercase tracking-[0.2em] block ml-2">
+                                Email Address
+                            </label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                                    <Mail className="h-5 w-5 text-muted group-focus-within:text-primary transition-colors" />
                                 </div>
                                 <input
                                     id="email"
@@ -101,54 +108,96 @@ export default function RegisterPage() {
                                     type="email"
                                     autoComplete="email"
                                     required
-                                    className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2"
-                                    placeholder="you@example.com"
+                                    className="w-full rounded-[2rem] border-2 border-input-border bg-background py-5 pl-14 pr-6 focus:ring-8 focus:ring-primary/10 focus:border-primary transition-all font-bold text-sharp outline-none placeholder:text-muted/40 placeholder:font-medium"
+                                    placeholder="you@warehouse.com"
                                     value={formData.email}
                                     onChange={handleChange}
                                 />
                             </div>
                         </div>
 
-                        <div>
-                            <label htmlFor="userRole" className="block text-sm font-medium text-gray-700">Role</label>
-                            <select
-                                id="userRole"
-                                name="userRole"
-                                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                                value={formData.userRole}
-                                onChange={handleChange}
-                            >
-                                <option value="ADMIN">Admin</option>
-                                <option value="STAFF">Staff</option>
-                            </select>
+                        {/* Role Selection */}
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black text-muted uppercase tracking-[0.2em] block ml-2">
+                                Access Level
+                            </label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none z-10">
+                                    <Shield className="h-5 w-5 text-muted group-focus-within:text-primary transition-colors" />
+                                </div>
+                                <select
+                                    id="userRole"
+                                    name="userRole"
+                                    className="w-full rounded-[2rem] border-2 border-input-border bg-background py-5 pl-14 pr-12 focus:ring-8 focus:ring-primary/10 focus:border-primary transition-all font-black text-sharp outline-none appearance-none cursor-pointer"
+                                    value={formData.userRole}
+                                    onChange={handleChange}
+                                >
+                                    <option value="STAFF">👤 Staff Member — Standard Access</option>
+                                    <option value="ADMIN">🔐 Administrator — Full System Access</option>
+                                    <option value="WAREHOUSE_MANAGER">🏢 Warehouse Manager — Operations Control</option>
+                                    <option value="PICKER">� Picker — Order Fulfillment</option>
+                                    <option value="PACKER">� Packer — Packaging Operations</option>
+                                    <option value="SUPERVISOR">� Supervisor — Team Oversight</option>
+                                    <option value="EXTERNAL_SHIPPER">� External Shipper — Delivery Partner</option>
+                                    <option value="AUDITOR">� Auditor — Compliance & Review</option>
+                                </select>
+                                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-muted">
+                                    ▼
+                                </div>
+                            </div>
                         </div>
 
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-                            <div className="mt-1 relative rounded-md shadow-sm">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Lock className="h-5 w-5 text-gray-400" />
+                        {/* Password */}
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black text-muted uppercase tracking-[0.2em] block ml-2">
+                                Password
+                            </label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                                    <Lock className="h-5 w-5 text-muted group-focus-within:text-primary transition-colors" />
                                 </div>
                                 <input
                                     id="password"
                                     name="password"
-                                    type="password"
-                                    autoComplete="current-password"
+                                    type={showPassword ? "text" : "password"}
+                                    autoComplete="new-password"
                                     required
-                                    className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2"
+                                    className="w-full rounded-[2rem] border-2 border-input-border bg-background py-5 pl-14 pr-14 focus:ring-8 focus:ring-primary/10 focus:border-primary transition-all font-bold text-sharp outline-none placeholder:text-muted/40 placeholder:font-medium"
+                                    placeholder="Create secure password"
                                     value={formData.password}
                                     onChange={handleChange}
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 right-0 pr-6 flex items-center cursor-pointer hover:scale-110 transition-transform"
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="h-5 w-5 text-muted hover:text-sharp transition-colors" />
+                                    ) : (
+                                        <Eye className="h-5 w-5 text-muted hover:text-sharp transition-colors" />
+                                    )}
+                                </button>
                             </div>
                         </div>
 
-                        <div>
-                            <Button type="submit" className="w-full" isLoading={loading}>
-                                Sign up
+                        {/* Submit Button */}
+                        <div className="pt-6">
+                            <Button
+                                type="submit"
+                                className="w-full py-7 text-sm font-black uppercase tracking-widest shadow-2xl shadow-primary/30 rounded-[2.5rem]"
+                                isLoading={loading}
+                            >
+                                {loading ? 'Initializing Account...' : 'Create Account'}
                             </Button>
                         </div>
                     </form>
                 </div>
+
+                {/* Footer */}
+                <p className="text-center text-[10px] font-bold text-muted/60 uppercase tracking-widest mt-8">
+                    Warehouse Management System v2.0
+                </p>
             </div>
         </div>
     );

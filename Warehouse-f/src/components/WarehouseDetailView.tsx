@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import {
     Building2,
     MapPin,
@@ -12,10 +13,18 @@ import {
     ChevronRight,
     Box as BoxIcon,
     ArrowLeft,
-    Edit2,
     Trash2,
-    Layers
+    Layers,
+    X,
+    Settings2,
+    Maximize2,
+    Layout,
+    BoxSelect,
+    Cpu,
+    Activity,
+    Warehouse as WarehouseIcon
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface Block {
     blockId: string;
@@ -49,12 +58,17 @@ export default function WarehouseDetailView({ warehouseId, onBack }: WarehouseDe
     const [warehouse, setWarehouse] = useState<Warehouse | null>(null);
     const [loading, setLoading] = useState(true);
     const [expandedRooms, setExpandedRooms] = useState<Record<string, boolean>>({});
-    const [isAddingRoom, setIsAddingRoom] = useState(false);
+
+    // Modals state
+    const [showRoomModal, setShowRoomModal] = useState(false);
+    const [showBlockModal, setShowBlockModal] = useState(false);
     const [addingBlockToRoomId, setAddingBlockToRoomId] = useState<string | null>(null);
+
     const [editingRoom, setEditingRoom] = useState<Room | null>(null);
     const [deletingRoomId, setDeletingRoomId] = useState<string | null>(null);
     const [editingBlock, setEditingBlock] = useState<Block | null>(null);
     const [deletingBlockId, setDeletingBlockId] = useState<string | null>(null);
+
     const [roomName, setRoomName] = useState('');
     const [blockData, setBlockData] = useState({
         height: 0, length: 0, breath: 0, type: 'RECKED'
@@ -69,7 +83,7 @@ export default function WarehouseDetailView({ warehouseId, onBack }: WarehouseDe
             const response = await api.get(`/warehouses/${warehouseId}`);
             setWarehouse(response.data.data);
         } catch (error) {
-            console.error('Failed to fetch warehouse', error);
+            toast.error('Failed to fetch warehouse details');
         } finally {
             setLoading(false);
         }
@@ -85,11 +99,12 @@ export default function WarehouseDetailView({ warehouseId, onBack }: WarehouseDe
         setLoading(true);
         try {
             await api.post(`/rooms/${warehouse.warehouseId}`, { name: roomName });
+            toast.success('Storage room registered');
             await fetchWarehouse();
-            setIsAddingRoom(false);
+            setShowRoomModal(false);
             setRoomName('');
         } catch (error) {
-            console.error('Failed to add room', error);
+            toast.error('Failed to register room');
         } finally {
             setLoading(false);
         }
@@ -101,11 +116,13 @@ export default function WarehouseDetailView({ warehouseId, onBack }: WarehouseDe
         setLoading(true);
         try {
             await api.post(`/blocks/${addingBlockToRoomId}`, blockData);
+            toast.success('Terminal block deployed');
             await fetchWarehouse();
+            setShowBlockModal(false);
             setAddingBlockToRoomId(null);
-            setBlockData({ height: 0, length: 0, breath: 0, type: 'RECKED' });
+            resetBlockForm();
         } catch (error) {
-            console.error('Failed to add block', error);
+            toast.error('Failed to deploy block');
         } finally {
             setLoading(false);
         }
@@ -114,6 +131,7 @@ export default function WarehouseDetailView({ warehouseId, onBack }: WarehouseDe
     const handleEditRoom = (room: Room) => {
         setEditingRoom(room);
         setRoomName(room.name);
+        setShowRoomModal(true);
     };
 
     const handleUpdateRoom = async (e: React.FormEvent) => {
@@ -122,11 +140,13 @@ export default function WarehouseDetailView({ warehouseId, onBack }: WarehouseDe
         setLoading(true);
         try {
             await api.put(`/rooms/${editingRoom.roomId}`, { name: roomName });
+            toast.success('Room parameters updated');
             await fetchWarehouse();
             setEditingRoom(null);
+            setShowRoomModal(false);
             setRoomName('');
         } catch (error) {
-            console.error('Failed to update room', error);
+            toast.error('Failed to update room');
         } finally {
             setLoading(false);
         }
@@ -136,10 +156,11 @@ export default function WarehouseDetailView({ warehouseId, onBack }: WarehouseDe
         setLoading(true);
         try {
             await api.delete(`/rooms/${roomId}`);
+            toast.success('Room purged from registry');
             await fetchWarehouse();
             setDeletingRoomId(null);
         } catch (error) {
-            console.error('Failed to delete room', error);
+            toast.error('Failed to purge room');
         } finally {
             setLoading(false);
         }
@@ -153,6 +174,7 @@ export default function WarehouseDetailView({ warehouseId, onBack }: WarehouseDe
             breath: block.breath,
             type: block.type
         });
+        setShowBlockModal(true);
     };
 
     const handleUpdateBlock = async (e: React.FormEvent) => {
@@ -161,11 +183,13 @@ export default function WarehouseDetailView({ warehouseId, onBack }: WarehouseDe
         setLoading(true);
         try {
             await api.put(`/blocks/${editingBlock.blockId}`, blockData);
+            toast.success('Block vector adjusted');
             await fetchWarehouse();
             setEditingBlock(null);
-            setBlockData({ height: 0, length: 0, breath: 0, type: 'RECKED' });
+            setShowBlockModal(false);
+            resetBlockForm();
         } catch (error) {
-            console.error('Failed to update block', error);
+            toast.error('Failed to adjust block');
         } finally {
             setLoading(false);
         }
@@ -175,308 +199,267 @@ export default function WarehouseDetailView({ warehouseId, onBack }: WarehouseDe
         setLoading(true);
         try {
             await api.delete(`/blocks/${blockId}`);
+            toast.success('Block decommissioned');
             await fetchWarehouse();
             setDeletingBlockId(null);
         } catch (error) {
-            console.error('Failed to delete block', error);
+            toast.error('Failed to decommission block');
         } finally {
             setLoading(false);
         }
     };
 
+    const resetBlockForm = () => {
+        setBlockData({ height: 0, length: 0, breath: 0, type: 'RECKED' });
+    };
+
     if (loading || !warehouse) {
         return (
-            <div className="flex flex-col items-center justify-center py-20 gap-4">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
-                <p className="text-gray-500 font-medium">Loading warehouse details...</p>
+            <div className="flex flex-col items-center justify-center py-40 gap-4">
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent shadow-xl shadow-primary/20"></div>
+                <p className="text-muted font-black text-[10px] uppercase tracking-[0.2em]">Synchronizing storage matrix...</p>
             </div>
         );
     }
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="p-8 space-y-10 animate-in fade-in duration-500">
             {/* Header with Back Button */}
-            <div className="flex items-center gap-4">
-                <Button variant="ghost" onClick={onBack} className="gap-2">
-                    <ArrowLeft className="h-4 w-4" />
-                    Back to List
-                </Button>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                <div className="flex items-center gap-6">
+                    <button
+                        onClick={onBack}
+                        className="p-4 bg-card rounded-2xl text-muted hover:text-sharp transition-all border border-card-border/50 shadow-sm group"
+                    >
+                        <ArrowLeft className="h-6 w-6 group-hover:-translate-x-1 transition-transform" />
+                    </button>
+                    <div>
+                        <h1 className="text-4xl font-black text-sharp tracking-tighter flex items-center gap-4">
+                            Node Inspection
+                        </h1>
+                        <p className="text-sm font-medium text-muted mt-2">Precision storage hierarchy and terminal management</p>
+                    </div>
+                </div>
             </div>
 
             {/* Warehouse Info Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white">
-                    <div className="flex justify-between items-start">
-                        <div className="flex items-center gap-4">
-                            <div className="p-4 bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-200">
-                                <Building2 className="h-8 w-8 text-white" />
-                            </div>
-                            <div>
-                                <h2 className="text-3xl font-black text-gray-900 tracking-tight">{warehouse.name}</h2>
-                                <div className="flex items-center gap-2 mt-2 text-gray-500">
-                                    <MapPin className="h-4 w-4" />
-                                    <span className="font-medium">{warehouse.city}</span>
-                                </div>
-                            </div>
+            <div className="bg-card rounded-[3rem] border-2 border-card-border shadow-sm overflow-hidden group">
+                <div className="p-12 border-b-2 border-card-border/30 bg-gradient-to-br from-primary/5 via-transparent to-transparent flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
+                    <div className="flex items-center gap-8">
+                        <div className="p-8 bg-primary rounded-[2rem] shadow-2xl shadow-primary/30 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-500">
+                            <WarehouseIcon className="h-12 w-12 text-white" />
                         </div>
-                    </div>
-                </div>
-
-                {/* Stats */}
-                <div className="px-8 py-6 grid grid-cols-3 gap-6 bg-gray-50/50 border-b border-gray-100">
-                    <div className="text-center">
-                        <div className="text-3xl font-black text-indigo-600">{warehouse.rooms?.length || 0}</div>
-                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Rooms</div>
-                    </div>
-                    <div className="text-center">
-                        <div className="text-3xl font-black text-indigo-600">
-                            {warehouse.rooms?.reduce((acc, r) => acc + (r.blocks?.length || 0), 0) || 0}
-                        </div>
-                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Total Blocks</div>
-                    </div>
-                    <div className="text-center">
-                        <div className="text-3xl font-black text-emerald-600">Active</div>
-                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Status</div>
-                    </div>
-                </div>
-
-                {/* Address */}
-                <div className="px-8 py-6">
-                    <div className="flex items-start gap-3 text-sm text-gray-600">
-                        <Navigation className="h-5 w-5 text-gray-400 mt-0.5 shrink-0" />
                         <div>
-                            <p className="font-medium">{warehouse.address}</p>
-                            <p className="text-gray-400 mt-1">Near {warehouse.landmark}</p>
+                            <h2 className="text-5xl font-black text-sharp tracking-tighter">{warehouse.name}</h2>
+                            <div className="flex items-center gap-4 mt-3">
+                                <span className="px-4 py-2 bg-background/80 text-muted rounded-xl text-[10px] font-black uppercase tracking-widest border border-card-border/50 flex items-center gap-2">
+                                    <MapPin size={12} className="text-primary" />
+                                    {warehouse.city}
+                                </span>
+                                <span className="px-4 py-2 bg-emerald-500/10 text-emerald-600 rounded-xl text-[10px] font-black uppercase tracking-widest border border-emerald-500/20 flex items-center gap-2">
+                                    <Activity size={12} className="animate-pulse" />
+                                    Active Link
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex gap-4 p-4 bg-background/50 rounded-[2rem] border-2 border-card-border/30">
+                        <div className="px-10 py-6 text-center border-r-2 border-card-border/30 last:border-0">
+                            <div className="text-4xl font-black text-sharp tracking-tighter">{warehouse.rooms?.length || 0}</div>
+                            <div className="text-[10px] font-black text-muted uppercase tracking-widest mt-2 leading-none">Rooms</div>
+                        </div>
+                        <div className="px-10 py-6 text-center">
+                            <div className="text-4xl font-black text-primary tracking-tighter">
+                                {warehouse.rooms?.reduce((acc, r) => acc + (r.blocks?.length || 0), 0) || 0}
+                            </div>
+                            <div className="text-[10px] font-black text-muted uppercase tracking-widest mt-2 leading-none">Terminals</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="px-12 py-10 flex flex-col md:flex-row gap-8 text-sm text-muted">
+                    <div className="flex items-start gap-4 flex-1">
+                        <div className="p-3 bg-background rounded-xl border border-card-border/50 shrink-0">
+                            <Navigation className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest mb-1 text-muted">Precision Vector</p>
+                            <p className="font-bold text-sharp text-base leading-relaxed">"{warehouse.address}"</p>
+                        </div>
+                    </div>
+                    <div className="flex items-start gap-4 flex-1">
+                        <div className="p-3 bg-background rounded-xl border border-card-border/50 shrink-0">
+                            <Layout className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest mb-1 text-muted">Auxiliary Reference</p>
+                            <p className="font-bold text-sharp text-base italic leading-relaxed">Near {warehouse.landmark}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Rooms & Blocks Section */}
-            <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                    <h3 className="text-xl font-black text-gray-900 tracking-tight flex items-center gap-2">
-                        <Layers className="h-5 w-5 text-indigo-600" />
-                        Storage Hierarchy
-                    </h3>
-                    <Button onClick={() => setIsAddingRoom(true)} className="gap-2">
-                        <Plus className="h-4 w-4" />
-                        Add Room
+            <div className="space-y-8">
+                <div className="flex justify-between items-center bg-card/50 p-6 rounded-[2rem] border-2 border-card-border/30 backdrop-blur-sm">
+                    <div>
+                        <h3 className="text-2xl font-black text-sharp tracking-tighter flex items-center gap-4">
+                            <Layers className="h-8 w-8 text-primary" />
+                            Storage Matrix
+                        </h3>
+                    </div>
+                    <Button
+                        onClick={() => setShowRoomModal(true)}
+                        className="h-14 px-8 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/20"
+                    >
+                        <Plus className="mr-2" />
+                        Append Room
                     </Button>
                 </div>
 
-                {(isAddingRoom || editingRoom) && (
-                    <div className="bg-indigo-50 p-6 rounded-2xl border border-indigo-100 animate-in slide-in-from-top-2 duration-300">
-                        <h5 className="text-sm font-bold text-indigo-900 mb-4">{editingRoom ? 'Edit Room' : 'Create New Room'}</h5>
-                        <form onSubmit={editingRoom ? handleUpdateRoom : handleAddRoom} className="flex gap-3">
-                            <input
-                                type="text"
-                                required
-                                placeholder="Room Name (e.g. Cold Storage A)"
-                                className="flex-1 rounded-xl border-gray-300 text-sm py-3 px-4"
-                                value={roomName}
-                                onChange={e => setRoomName(e.target.value)}
-                            />
-                            <Button type="submit" isLoading={loading}>{editingRoom ? 'Update' : 'Create'}</Button>
-                            <Button variant="outline" onClick={() => {
-                                setIsAddingRoom(false);
-                                setEditingRoom(null);
-                                setRoomName('');
-                            }}>Cancel</Button>
-                        </form>
-                    </div>
-                )}
-
                 {warehouse.rooms && warehouse.rooms.length > 0 ? (
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-1 gap-6">
                         {warehouse.rooms.map((room) => (
-                            <div key={room.roomId} className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all relative">
-                                {/* Delete Confirmation Overlay for Room */}
+                            <div
+                                key={room.roomId}
+                                className={`bg-card rounded-[3rem] border-2 transition-all duration-500 overflow-hidden relative ${expandedRooms[room.roomId] ? 'border-primary shadow-2xl shadow-primary/5' : 'border-card-border shadow-sm hover:shadow-xl'}`}
+                            >
                                 {deletingRoomId === room.roomId && (
-                                    <div className="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl z-20 flex flex-col items-center justify-center p-6 gap-4">
-                                        <p className="text-sm font-bold text-gray-900 text-center">Delete this room and all its blocks?</p>
-                                        <p className="text-xs text-gray-500 text-center">This action cannot be undone.</p>
-                                        <div className="flex gap-2">
-                                            <Button variant="outline" size="sm" onClick={() => setDeletingRoomId(null)}>
-                                                Cancel
+                                    <div className="absolute inset-0 bg-background/95 backdrop-blur-md z-[50] flex flex-col items-center justify-center p-12 gap-8 animate-in fade-in zoom-in-95 text-center">
+                                        <div className="p-6 bg-red-500/10 rounded-full text-red-500 border border-red-500/20">
+                                            <Trash2 size={48} />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-2xl font-black text-sharp uppercase tracking-tighter mb-4">Purge Storage Room?</h4>
+                                            <p className="text-sm text-muted font-bold uppercase tracking-widest max-w-sm mx-auto">
+                                                Warning: All terminal nodes associated with <span className="text-sharp">"{room.name}"</span> will be permanentely erased from the matrix.
+                                            </p>
+                                        </div>
+                                        <div className="flex gap-4 w-full max-w-md">
+                                            <Button size="lg" className="flex-1 bg-red-600 hover:bg-red-700 h-16 text-xs font-black uppercase tracking-widest shadow-xl shadow-red-500/20" onClick={() => handleDeleteRoom(room.roomId)} isLoading={loading}>
+                                                Confirm Purge
                                             </Button>
-                                            <Button size="sm" className="bg-red-600 hover:bg-red-700" onClick={() => handleDeleteRoom(room.roomId)} isLoading={loading}>
-                                                Delete
+                                            <Button variant="ghost" size="lg" className="flex-1 h-16 text-xs font-black uppercase tracking-widest" onClick={() => setDeletingRoomId(null)}>
+                                                Stand Down
                                             </Button>
                                         </div>
                                     </div>
                                 )}
 
                                 <div
-                                    className="px-6 py-4 flex items-center justify-between cursor-pointer select-none hover:bg-gray-50"
+                                    className={`p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between cursor-pointer select-none gap-6 ${expandedRooms[room.roomId] ? 'bg-primary/5' : 'hover:bg-primary/5'}`}
                                     onClick={() => toggleRoom(room.roomId)}
                                 >
-                                    <div className="flex items-center gap-4">
-                                        {expandedRooms[room.roomId] ?
-                                            <ChevronDown className="h-5 w-5 text-gray-400" /> :
-                                            <ChevronRight className="h-5 w-5 text-gray-400" />
-                                        }
-                                        <span className="font-bold text-gray-900 text-lg">{room.name}</span>
-                                        <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full font-bold">
-                                            {room.blocks?.length || 0} BLOCKS
-                                        </span>
+                                    <div className="flex items-center gap-6">
+                                        <div className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${expandedRooms[room.roomId] ? 'bg-primary text-white rotate-90 scale-110' : 'bg-background border border-card-border text-muted group-hover:text-primary'}`}>
+                                            <ChevronRight className="h-6 w-6" />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-4">
+                                                <span className="font-black text-sharp text-3xl tracking-tighter">{room.name}</span>
+                                                <span className="text-[10px] bg-background border border-card-border/50 text-muted px-4 py-1.5 rounded-full font-black uppercase tracking-widest">
+                                                    {room.blocks?.length || 0} TERMINALS
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="flex gap-2">
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleEditRoom(room);
-                                            }}
-                                            className="p-2 hover:bg-indigo-50 rounded-lg text-gray-400 hover:text-indigo-600 transition-colors"
-                                            title="Edit room"
-                                        >
-                                            <Edit2 className="h-4 w-4" />
-                                        </button>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setDeletingRoomId(room.roomId);
-                                            }}
-                                            className="p-2 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-600 transition-colors"
-                                            title="Delete room"
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </button>
+
+                                    <div className="flex items-center gap-3" onClick={e => e.stopPropagation()}>
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="gap-2"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
+                                            className="h-12 w-12 rounded-xl border border-card-border/50 bg-background hover:bg-primary/10 hover:text-primary transition-all p-0"
+                                            onClick={() => handleEditRoom(room)}
+                                        >
+                                            <Settings2 size={20} />
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-12 w-12 rounded-xl border border-card-border/50 bg-background hover:bg-red-500/10 hover:text-red-500 transition-all p-0"
+                                            onClick={() => setDeletingRoomId(room.roomId)}
+                                        >
+                                            <Trash2 size={20} />
+                                        </Button>
+                                        <div className="h-8 w-[2px] bg-card-border/30 mx-2 hidden md:block" />
+                                        <Button
+                                            className="h-12 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/10"
+                                            onClick={() => {
                                                 setAddingBlockToRoomId(room.roomId);
+                                                setShowBlockModal(true);
                                             }}
                                         >
-                                            <Plus className="h-4 w-4" />
-                                            Add Block
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            Spawn Block
                                         </Button>
                                     </div>
                                 </div>
 
                                 {expandedRooms[room.roomId] && (
-                                    <div className="px-6 pb-6 pt-2 space-y-4 border-t bg-gray-50/30 animate-in slide-in-from-top-1">
-                                        {(addingBlockToRoomId === room.roomId || (editingBlock && room.blocks?.some(b => b.blockId === editingBlock.blockId))) && (
-                                            <div className="bg-white p-6 rounded-xl border border-indigo-100 shadow-sm">
-                                                <h6 className="text-xs font-black text-indigo-900 mb-4 uppercase tracking-wider">
-                                                    {editingBlock ? 'Edit Block Configuration' : 'New Block Configuration'}
-                                                </h6>
-                                                <form onSubmit={editingBlock ? handleUpdateBlock : handleAddBlock} className="space-y-4">
-                                                    <div className="grid grid-cols-3 gap-4">
-                                                        <div>
-                                                            <label className="text-xs uppercase font-bold text-gray-400 block mb-2">Height (m)</label>
-                                                            <input
-                                                                type="number"
-                                                                step="0.1"
-                                                                required
-                                                                className="w-full text-sm rounded-lg border-gray-300 py-2"
-                                                                value={blockData.height}
-                                                                onChange={e => setBlockData({ ...blockData, height: parseFloat(e.target.value) })}
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label className="text-xs uppercase font-bold text-gray-400 block mb-2">Length (m)</label>
-                                                            <input
-                                                                type="number"
-                                                                step="0.1"
-                                                                required
-                                                                className="w-full text-sm rounded-lg border-gray-300 py-2"
-                                                                value={blockData.length}
-                                                                onChange={e => setBlockData({ ...blockData, length: parseFloat(e.target.value) })}
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label className="text-xs uppercase font-bold text-gray-400 block mb-2">Breadth (m)</label>
-                                                            <input
-                                                                type="number"
-                                                                step="0.1"
-                                                                required
-                                                                className="w-full text-sm rounded-lg border-gray-300 py-2"
-                                                                value={blockData.breath}
-                                                                onChange={e => setBlockData({ ...blockData, breath: parseFloat(e.target.value) })}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex gap-3">
-                                                        <select
-                                                            className="flex-1 text-sm rounded-lg border-gray-300 py-2"
-                                                            value={blockData.type}
-                                                            onChange={e => setBlockData({ ...blockData, type: e.target.value })}
-                                                        >
-                                                            <option value="RECKED">Recked (Shelved)</option>
-                                                            <option value="UNRECKED">Unrecked (Floor Space)</option>
-                                                        </select>
-                                                        <Button type="submit" isLoading={loading}>{editingBlock ? 'Update Block' : 'Create Block'}</Button>
-                                                        <Button variant="outline" onClick={() => {
-                                                            setAddingBlockToRoomId(null);
-                                                            setEditingBlock(null);
-                                                            setBlockData({ height: 0, length: 0, breath: 0, type: 'RECKED' });
-                                                        }}>Cancel</Button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        )}
+                                    <div className="px-10 pb-12 pt-4 space-y-8 animate-in slide-in-from-top-4 duration-500">
+                                        <div className="h-[2px] bg-gradient-to-r from-primary/30 to-transparent" />
 
                                         {room.blocks && room.blocks.length > 0 ? (
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                                 {room.blocks.map((block) => (
-                                                    <div key={block.blockId} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all relative">
-                                                        {/* Delete Confirmation Overlay for Block */}
+                                                    <div key={block.blockId} className="bg-background/80 rounded-[2.5rem] p-8 border-2 border-card-border/30 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all relative group/block">
                                                         {deletingBlockId === block.blockId && (
-                                                            <div className="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-xl z-10 flex flex-col items-center justify-center p-4 gap-3">
-                                                                <p className="text-xs font-bold text-gray-900 text-center">Delete this block?</p>
-                                                                <div className="flex gap-2">
-                                                                    <Button variant="outline" size="sm" onClick={() => setDeletingBlockId(null)}>
-                                                                        Cancel
+                                                            <div className="absolute inset-0 bg-background/95 backdrop-blur-md rounded-[2.5rem] z-20 flex flex-col items-center justify-center p-6 gap-6 animate-in fade-in">
+                                                                <p className="text-[10px] font-black text-sharp text-center uppercase tracking-widest leading-relaxed">Sever Block Link?</p>
+                                                                <div className="flex gap-2 w-full">
+                                                                    <Button size="sm" className="flex-1 bg-red-600 h-10 text-[8px] font-black uppercase tracking-[0.2em]" onClick={() => handleDeleteBlock(block.blockId)} isLoading={loading}>
+                                                                        Confirm
                                                                     </Button>
-                                                                    <Button size="sm" className="bg-red-600 hover:bg-red-700" onClick={() => handleDeleteBlock(block.blockId)} isLoading={loading}>
-                                                                        Delete
+                                                                    <Button variant="ghost" size="sm" className="flex-1 h-10 text-[8px] font-black uppercase tracking-[0.2em]" onClick={() => setDeletingBlockId(null)}>
+                                                                        Abort
                                                                     </Button>
                                                                 </div>
                                                             </div>
                                                         )}
 
-                                                        <div className="flex justify-between items-start mb-3">
-                                                            <div className={`p-2 rounded-lg ${block.type === 'RECKED' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
-                                                                <BoxIcon className="h-4 w-4" />
+                                                        <div className="flex justify-between items-start mb-6">
+                                                            <div className={`p-4 rounded-2xl flex items-center justify-center shadow-lg transition-transform duration-500 group-hover/block:rotate-12 ${block.type === 'RECKED' ? 'bg-amber-500/10 text-amber-500 shadow-amber-500/5' : 'bg-primary/10 text-primary shadow-primary/5'}`}>
+                                                                <BoxIcon className="h-6 w-6" />
                                                             </div>
-                                                            <div className="flex gap-1">
+                                                            <div className="flex gap-1 opacity-0 group-hover/block:opacity-100 transition-opacity">
                                                                 <button
                                                                     onClick={() => handleEditBlock(block)}
-                                                                    className="p-1.5 hover:bg-indigo-50 rounded text-gray-400 hover:text-indigo-600 transition-colors"
-                                                                    title="Edit block"
+                                                                    className="p-2 hover:bg-primary/10 rounded-lg text-muted hover:text-primary transition-all"
                                                                 >
-                                                                    <Edit2 className="h-3 w-3" />
+                                                                    <Settings2 className="h-4 w-4" />
                                                                 </button>
                                                                 <button
                                                                     onClick={() => setDeletingBlockId(block.blockId)}
-                                                                    className="p-1.5 hover:bg-red-50 rounded text-gray-400 hover:text-red-600 transition-colors"
-                                                                    title="Delete block"
+                                                                    className="p-2 hover:bg-red-500/10 rounded-lg text-muted hover:text-red-500 transition-all"
                                                                 >
-                                                                    <Trash2 className="h-3 w-3" />
+                                                                    <Trash2 className="h-4 w-4" />
                                                                 </button>
                                                             </div>
                                                         </div>
-                                                        <div className="space-y-2">
-                                                            <p className="text-[10px] font-mono text-gray-400">ID: {block.blockId.slice(0, 8)}</p>
-                                                            <span className={`text-[9px] font-black px-2 py-1 rounded-full uppercase inline-block ${block.type === 'RECKED' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
-                                                                {block.type}
+
+                                                        <div className="space-y-6">
+                                                            <div>
+                                                                <p className="text-[10px] font-black text-muted uppercase tracking-[0.3em] font-mono mb-2">NODE_ID</p>
+                                                                <p className="text-sm font-black text-sharp tracking-tight truncate">{block.blockId.slice(0, 12)}...</p>
+                                                            </div>
+
+                                                            <span className={`text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-[0.2em] inline-block border ${block.type === 'RECKED' ? 'bg-amber-500/10 text-amber-600 border-amber-500/20' : 'bg-primary/5 text-primary border-primary/20'}`}>
+                                                                {block.type === 'RECKED' ? 'SHELVED_ASSET' : 'FLOOR_ALLOCATION'}
                                                             </span>
-                                                            <div className="grid grid-cols-3 gap-2">
-                                                                <div className="bg-gray-50 p-2 rounded text-center">
-                                                                    <p className="text-[8px] font-black text-gray-400 uppercase">H</p>
-                                                                    <p className="text-sm font-bold text-gray-700">{block.height}m</p>
+
+                                                            <div className="grid grid-cols-3 gap-3">
+                                                                <div className="bg-card p-3 rounded-2xl border border-card-border/50 text-center">
+                                                                    <p className="text-[8px] font-black text-muted uppercase mb-1">Vector_H</p>
+                                                                    <p className="text-sm font-black text-sharp tabular-nums">{block.height}m</p>
                                                                 </div>
-                                                                <div className="bg-gray-50 p-2 rounded text-center">
-                                                                    <p className="text-[8px] font-black text-gray-400 uppercase">L</p>
-                                                                    <p className="text-sm font-bold text-gray-700">{block.length}m</p>
+                                                                <div className="bg-card p-3 rounded-2xl border border-card-border/50 text-center">
+                                                                    <p className="text-[8px] font-black text-muted uppercase mb-1">Vector_L</p>
+                                                                    <p className="text-sm font-black text-sharp tabular-nums">{block.length}m</p>
                                                                 </div>
-                                                                <div className="bg-gray-50 p-2 rounded text-center">
-                                                                    <p className="text-[8px] font-black text-gray-400 uppercase">B</p>
-                                                                    <p className="text-sm font-bold text-gray-700">{block.breath}m</p>
+                                                                <div className="bg-card p-3 rounded-2xl border border-card-border/50 text-center">
+                                                                    <p className="text-[8px] font-black text-muted uppercase mb-1">Vector_B</p>
+                                                                    <p className="text-sm font-black text-sharp tabular-nums">{block.breath}m</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -484,7 +467,11 @@ export default function WarehouseDetailView({ warehouseId, onBack }: WarehouseDe
                                                 ))}
                                             </div>
                                         ) : (
-                                            <p className="text-sm text-gray-400 text-center py-8 italic">No blocks configured for this room.</p>
+                                            <div className="py-20 bg-background/50 rounded-[3rem] border-2 border-dashed border-card-border/50 text-center">
+                                                <Cpu className="h-16 w-16 text-muted/10 mx-auto mb-6" />
+                                                <p className="text-muted font-black uppercase tracking-[0.3em] text-[10px]">Matrix Layer Null</p>
+                                                <p className="text-[10px] text-muted/40 mt-4 font-bold uppercase tracking-widest">No storage components detected at this level.</p>
+                                            </div>
                                         )}
                                     </div>
                                 )}
@@ -492,11 +479,197 @@ export default function WarehouseDetailView({ warehouseId, onBack }: WarehouseDe
                         ))}
                     </div>
                 ) : (
-                    <div className="bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl p-16 text-center">
-                        <p className="text-gray-400 font-medium italic">No rooms created yet. Start by adding a room.</p>
+                    <div className="py-60 border-4 border-dashed border-card-border rounded-[5rem] text-center bg-card/10">
+                        <BoxSelect className="h-32 w-32 text-muted/10 mx-auto mb-10" />
+                        <h4 className="text-2xl font-black text-muted uppercase tracking-[0.5em]">Storage Void</h4>
+                        <p className="text-sm text-muted/40 mt-8 font-bold uppercase tracking-widest max-w-sm mx-auto leading-relaxed">
+                            The warehouse matrix has no initialized partitions. Commence room registration to define the storage hierarchy.
+                        </p>
+                        <Button
+                            variant="ghost"
+                            className="mt-12 text-[10px] font-black uppercase tracking-[0.3em]"
+                            onClick={() => setShowRoomModal(true)}
+                        >
+                            Executive Partitioning
+                        </Button>
                     </div>
                 )}
             </div>
+
+            {/* Room Modal */}
+            {showRoomModal && (
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-xl flex items-center justify-center z-[100] p-6 animate-in fade-in duration-500">
+                    <div className="bg-card rounded-[4rem] p-12 max-w-xl w-full border-2 border-card-border shadow-2xl animate-in zoom-in-95">
+                        <div className="flex justify-between items-start mb-12">
+                            <div>
+                                <h3 className="text-4xl font-black text-sharp tracking-tighter">
+                                    {editingRoom ? 'Adjust Partition' : 'Add Partition'}
+                                </h3>
+                                <p className="text-sm font-medium text-muted mt-2">
+                                    {editingRoom ? 'Redefining storage space parameters' : 'Initializing new storage room sector'}
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => {
+                                    setShowRoomModal(false);
+                                    setEditingRoom(null);
+                                    setRoomName('');
+                                }}
+                                className="p-4 bg-background rounded-3xl text-muted hover:text-sharp transition-all border border-card-border/50"
+                            >
+                                <X size={28} />
+                            </button>
+                        </div>
+
+                        <form onSubmit={editingRoom ? handleUpdateRoom : handleAddRoom} className="space-y-10">
+                            <div>
+                                <Input
+                                    label="Partition Designation *"
+                                    required
+                                    className="py-6 px-8 rounded-[2rem] font-black text-xl"
+                                    placeholder="e.g. COLD_STORAGE_A"
+                                    value={roomName}
+                                    onChange={e => setRoomName(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="flex flex-col md:flex-row gap-4 pt-10 border-t border-card-border/30">
+                                <Button
+                                    type="submit"
+                                    className="flex-1 py-7 text-xs font-black uppercase tracking-widest shadow-2xl shadow-primary/30 h-18"
+                                    isLoading={loading}
+                                >
+                                    {editingRoom ? 'Update Specification' : 'Finalize Partition'}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    className="flex-1 py-5 text-[10px] font-black uppercase tracking-widest"
+                                    onClick={() => {
+                                        setShowRoomModal(false);
+                                        setEditingRoom(null);
+                                        setRoomName('');
+                                    }}
+                                >
+                                    Abort
+                                </Button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Block Modal */}
+            {showBlockModal && (
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-xl flex items-center justify-center z-[100] p-6 animate-in fade-in duration-500">
+                    <div className="bg-card rounded-[4rem] p-12 max-w-2xl w-full border-2 border-card-border shadow-2xl animate-in zoom-in-95">
+                        <div className="flex justify-between items-start mb-12">
+                            <div>
+                                <h3 className="text-4xl font-black text-sharp tracking-tighter">
+                                    {editingBlock ? 'Block Re-alignment' : 'Terminal Spawning'}
+                                </h3>
+                                <p className="text-sm font-medium text-muted mt-2">
+                                    Define technical dimensions and operational tier
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => {
+                                    setShowBlockModal(false);
+                                    setEditingBlock(null);
+                                    setAddingBlockToRoomId(null);
+                                    resetBlockForm();
+                                }}
+                                className="p-4 bg-background rounded-3xl text-muted hover:text-sharp transition-all border border-card-border/50"
+                            >
+                                <X size={28} />
+                            </button>
+                        </div>
+
+                        <form onSubmit={editingBlock ? handleUpdateBlock : handleAddBlock} className="space-y-10">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <Input
+                                    label="Vertical Vector (m)"
+                                    type="number"
+                                    step="0.1"
+                                    required
+                                    className="py-5 px-6 rounded-3xl font-black text-lg"
+                                    value={blockData.height || ''}
+                                    onChange={e => setBlockData({ ...blockData, height: parseFloat(e.target.value) || 0 })}
+                                />
+                                <Input
+                                    label="Longitude Vector (m)"
+                                    type="number"
+                                    step="0.1"
+                                    required
+                                    className="py-5 px-6 rounded-3xl font-black text-lg"
+                                    value={blockData.length || ''}
+                                    onChange={e => setBlockData({ ...blockData, length: parseFloat(e.target.value) || 0 })}
+                                />
+                                <Input
+                                    label="Breadth Vector (m)"
+                                    type="number"
+                                    step="0.1"
+                                    required
+                                    className="py-5 px-6 rounded-3xl font-black text-lg"
+                                    value={blockData.breath || ''}
+                                    onChange={e => setBlockData({ ...blockData, breath: parseFloat(e.target.value) || 0 })}
+                                />
+                            </div>
+
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-black text-muted uppercase tracking-[0.2em] ml-2">Operational Tier Configuration</label>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => setBlockData({ ...blockData, type: 'RECKED' })}
+                                        className={`p-6 rounded-[2rem] border-2 transition-all flex flex-col items-center gap-4 ${blockData.type === 'RECKED' ? 'border-primary bg-primary/5 shadow-inner' : 'border-card-border hover:border-primary/50'}`}
+                                    >
+                                        <Layers className={`h-8 w-8 ${blockData.type === 'RECKED' ? 'text-primary' : 'text-muted'}`} />
+                                        <div className="text-center">
+                                            <p className="text-xs font-black text-sharp uppercase">SHELVED_RECK</p>
+                                            <p className="text-[10px] text-muted mt-1 uppercase font-bold">Standard stacking logic</p>
+                                        </div>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setBlockData({ ...blockData, type: 'UNRECKED' })}
+                                        className={`p-6 rounded-[2rem] border-2 transition-all flex flex-col items-center gap-4 ${blockData.type === 'UNRECKED' ? 'border-primary bg-primary/5 shadow-inner' : 'border-card-border hover:border-primary/50'}`}
+                                    >
+                                        <Maximize2 className={`h-8 w-8 ${blockData.type === 'UNRECKED' ? 'text-primary' : 'text-muted'}`} />
+                                        <div className="text-center">
+                                            <p className="text-xs font-black text-sharp uppercase">FLOOR_MAX</p>
+                                            <p className="text-[10px] text-muted mt-1 uppercase font-bold">Raw volumetric allocation</p>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col md:flex-row gap-4 pt-10 border-t border-card-border/30">
+                                <Button
+                                    type="submit"
+                                    className="flex-1 py-7 text-xs font-black uppercase tracking-widest shadow-2xl shadow-primary/30 h-18"
+                                    isLoading={loading}
+                                >
+                                    {editingBlock ? 'Finalize Vector shift' : 'Initiate Spawning'}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    className="flex-1 py-5 text-[10px] font-black uppercase tracking-widest"
+                                    onClick={() => {
+                                        setShowBlockModal(false);
+                                        setEditingBlock(null);
+                                        setAddingBlockToRoomId(null);
+                                        resetBlockForm();
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

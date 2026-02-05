@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ConditionalNavbar from "@/components/ConditionalNavbar";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import ToastProvider from "@/components/ToastProvider";
 
 const geistSans = Geist({
@@ -28,17 +29,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="min-h-screen flex flex-col">
-          <AuthProvider>
-            <ToastProvider />
-            <ConditionalNavbar />
-            <main className="flex-grow">
-              {children}
-            </main>
-          </AuthProvider>
-        </div>
+        <ThemeProvider>
+          <div className="min-h-screen flex flex-col">
+            <AuthProvider>
+              <ToastProvider />
+              <ConditionalNavbar />
+              <main className="flex-grow">
+                {children}
+              </main>
+            </AuthProvider>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

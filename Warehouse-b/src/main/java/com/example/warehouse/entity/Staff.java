@@ -9,9 +9,9 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-public class Staff extends User{
+public class Staff extends User {
 
     @ManyToOne
-    @JoinColumn(name = "warehouse_id")
+    @JoinColumn(name = "warehouse_id", nullable = true)
     private WareHouse warehouse;
 }

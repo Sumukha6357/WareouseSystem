@@ -49,19 +49,39 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const USER_STORAGE_KEY = 'warehouse_user';
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
     const pathname = usePathname();
 
+    // Save user to localStorage whenever it changes
+    useEffect(() => {
+        if (user) {
+            localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+        } else {
+            localStorage.removeItem(USER_STORAGE_KEY);
+        }
+    }, [user]);
+
     const refreshUser = async () => {
         try {
-            // Check if we have an active session
+            // First, try to get user from localStorage for immediate UI update
+            const cachedUser = localStorage.getItem(USER_STORAGE_KEY);
+            if (cachedUser) {
+                setUser(JSON.parse(cachedUser));
+            }
+
+            // Then verify with backend
             const response = await api.get('/users/me');
-            setUser(response.data.data); // Based on ResponseStructure
+            const userData = response.data.data;
+            setUser(userData);
         } catch (error) {
+            // If backend fails, clear everything
             setUser(null);
+            localStorage.removeItem(USER_STORAGE_KEY);
         } finally {
             setIsLoading(false);
         }
@@ -107,9 +127,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             await api.post('/logout');
             toast.success('Logged out successfully');
         } catch (error) {
-            toast.error('Logout failed. Please try again.');
+            console.error('Logout error:', error);
+            // Still logout on frontend even if backend fails
         } finally {
             setUser(null);
+            localStorage.removeItem(USER_STORAGE_KEY);
             router.push('/');
         }
     };

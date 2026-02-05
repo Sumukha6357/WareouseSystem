@@ -72,42 +72,42 @@ export default function ActivityFeedView() {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
-                <p className="text-gray-500 font-medium">Loading activity feed...</p>
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                <p className="text-muted font-medium">Loading activity feed...</p>
             </div>
         );
     }
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="space-y-8 animate-in fade-in duration-500">
             <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h3 className="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2">
-                        <Activity className="h-6 w-6 text-indigo-600" />
+                    <h3 className="text-3xl font-black text-sharp tracking-tight flex items-center gap-3">
+                        <Activity className="h-7 w-7 text-primary" />
                         Activity Feed
                     </h3>
-                    <p className="text-sm font-medium text-gray-400">Real-time stock movement tracking</p>
+                    <p className="text-sm font-medium text-muted">Real-time logistics movement tracking</p>
                 </div>
                 <div className="flex gap-2">
                     <select
                         value={limit}
                         onChange={(e) => setLimit(Number(e.target.value))}
-                        className="px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="px-6 py-3 bg-card border-2 border-input-border rounded-xl text-xs font-black uppercase tracking-widest text-sharp focus:outline-none focus:ring-2 focus:ring-primary transition-all outline-none"
                     >
-                        <option value={25}>Last 25</option>
-                        <option value={50}>Last 50</option>
-                        <option value={100}>Last 100</option>
+                        <option value={25}>Show 25</option>
+                        <option value={50}>Show 50</option>
+                        <option value={100}>Show 100</option>
                     </select>
                 </div>
             </header>
 
             {movements.length === 0 ? (
-                <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100">
-                    <Activity className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                    <p className="text-gray-400 font-medium">No stock movements yet</p>
+                <div className="text-center py-24 bg-card rounded-3xl border-2 border-dashed border-card-border">
+                    <Activity className="h-16 w-16 text-muted/20 mx-auto mb-6" />
+                    <p className="text-muted font-black uppercase tracking-widest text-xs">No stock movements found</p>
                 </div>
             ) : (
-                <div className="space-y-3">
+                <div className="grid grid-cols-1 gap-4">
                     {movements.map((movement) => {
                         const config = movementTypeConfig[movement.movementType];
                         const Icon = config.icon;
@@ -115,60 +115,64 @@ export default function ActivityFeedView() {
                         return (
                             <div
                                 key={movement.movementId}
-                                className={`bg-white p-4 rounded-xl border ${config.border} hover:shadow-md transition-all`}
+                                className="bg-card p-6 rounded-3xl border border-card-border hover:shadow-xl hover:shadow-primary/5 transition-all group"
                             >
-                                <div className="flex items-start gap-4">
+                                <div className="flex items-start gap-6">
                                     {/* Icon */}
-                                    <div className={`p-2 rounded-lg ${config.bg} ${config.color}`}>
-                                        <Icon className="h-5 w-5" />
+                                    <div className={`p-4 rounded-2xl ${config.bg} ${config.color} transition-transform group-hover:scale-110 group-hover:rotate-3`}>
+                                        <Icon className="h-6 w-6" />
                                     </div>
 
                                     {/* Content */}
                                     <div className="flex-1 min-w-0">
-                                        <div className="flex items-start justify-between gap-2 mb-1">
-                                            <div className="flex-1">
-                                                <p className="font-bold text-gray-900 text-sm">
+                                        <div className="flex items-start justify-between gap-4 mb-3">
+                                            <div className="min-w-0">
+                                                <p className="font-black text-sharp text-lg truncate leading-tight">
                                                     {movement.product.name}
                                                 </p>
-                                                <p className="text-xs text-gray-400 font-mono">{movement.product.sku}</p>
+                                                <p className="text-[10px] text-muted font-black uppercase tracking-widest mt-1">SKU: {movement.product.sku}</p>
                                             </div>
-                                            <span className={`text-xs font-black px-2 py-0.5 rounded-full ${config.bg} ${config.color}`}>
+                                            <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${config.bg} ${config.color} border border-current/10 whitespace-now nowrap`}>
                                                 {config.label}
                                             </span>
                                         </div>
 
                                         {/* Movement Details */}
-                                        <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
-                                            <span className="font-bold">{movement.quantity} units</span>
+                                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-sharp mb-4">
+                                            <span className="font-black px-2 py-1 bg-primary/5 rounded-lg text-primary">{movement.quantity} units</span>
                                             {movement.fromBlockName && (
-                                                <>
-                                                    <span className="text-gray-400">from</span>
-                                                    <span className="font-medium text-gray-700">{movement.fromBlockName}</span>
-                                                </>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] font-bold text-muted uppercase">From</span>
+                                                    <span className="font-black">{movement.fromBlockName}</span>
+                                                </div>
                                             )}
+                                            {movement.fromBlockName && movement.toBlockName && <span className="text-muted">→</span>}
                                             {movement.toBlockName && (
-                                                <>
-                                                    <span className="text-gray-400">to</span>
-                                                    <span className="font-medium text-gray-700">{movement.toBlockName}</span>
-                                                </>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] font-bold text-muted uppercase">To</span>
+                                                    <span className="font-black">{movement.toBlockName}</span>
+                                                </div>
                                             )}
                                         </div>
 
                                         {/* Notes & Reference */}
-                                        {movement.notes && (
-                                            <p className="text-xs text-gray-500 italic mb-1">{movement.notes}</p>
-                                        )}
-                                        {movement.referenceType && movement.referenceId && (
-                                            <p className="text-[10px] text-gray-400 font-mono">
-                                                Ref: {movement.referenceType} #{movement.referenceId.substring(0, 8)}
-                                            </p>
-                                        )}
+                                        <div className="flex flex-col gap-2 p-4 bg-background/50 rounded-2xl border border-card-border/50">
+                                            {movement.notes && (
+                                                <p className="text-xs text-muted italic">"{movement.notes}"</p>
+                                            )}
+                                            {movement.referenceType && (
+                                                <p className="text-[10px] text-muted font-mono font-bold uppercase tracking-tighter">
+                                                    Ref: {movement.referenceType} # {movement.referenceId?.substring(0, 8)}
+                                                </p>
+                                            )}
+                                        </div>
 
                                         {/* Footer */}
-                                        <div className="flex items-center gap-2 mt-2 text-[10px] text-gray-400">
-                                            <span>By {movement.createdBy}</span>
-                                            <span>•</span>
-                                            <span>{formatDate(movement.createdAt)}</span>
+                                        <div className="flex items-center justify-between mt-4 pt-4 border-t border-card-border/50">
+                                            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted">
+                                                <span>Operator: {movement.createdBy}</span>
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-primary">{formatDate(movement.createdAt)}</span>
                                         </div>
                                     </div>
                                 </div>

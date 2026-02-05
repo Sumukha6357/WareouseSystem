@@ -2,75 +2,57 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { ArrowRight, CheckCircle, Shield, Truck } from "lucide-react";
+import { ArrowRight, CheckCircle, Shield, Truck, Package, Zap, TrendingUp } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
   const { user } = useAuth();
 
   return (
-    <div className="bg-white">
+    <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-950 min-h-screen">
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gray-50">
-        <div className="absolute inset-y-0 w-full h-full" aria-hidden="true">
-          <div className="relative h-full">
-            <svg
-              className="absolute right-full transform translate-y-1/3 translate-x-1/4 md:translate-y-1/2 sm:translate-x-1/2 lg:translate-x-full"
-              width="404"
-              height="784"
-              fill="none"
-              viewBox="0 0 404 784"
-            >
-              <defs>
-                <pattern
-                  id="e229dbec-10e9-49ee-8ec3-0286ca089edf"
-                  x="0"
-                  y="0"
-                  width="20"
-                  height="20"
-                  patternUnits="userSpaceOnUse"
-                >
-                  <rect x="0" y="0" width="4" height="4" className="text-gray-200" fill="currentColor" />
-                </pattern>
-              </defs>
-              <rect width="404" height="784" fill="url(#e229dbec-10e9-49ee-8ec3-0286ca089edf)" />
-            </svg>
-          </div>
+      <div className="relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-gradient-to-br from-pink-400/20 to-rose-400/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1.5s' }}></div>
+          <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-gradient-to-br from-purple-400/15 to-indigo-400/15 rounded-full blur-3xl animate-pulse-subtle"></div>
         </div>
+
         <div className="relative pt-6 pb-16 sm:pb-24">
           <main className="mt-16 mx-auto max-w-7xl px-4 sm:mt-24 sm:px-6 lg:mt-32">
             <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-              <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
+              <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left animate-slide-up">
                 <h1>
-                  <span className="block text-sm font-semibold uppercase tracking-wide text-indigo-600 sm:text-base lg:text-sm xl:text-base">
+                  <span className="block text-sm font-black uppercase tracking-widest text-primary sm:text-base lg:text-sm xl:text-base mb-4">
                     Next-Gen Management
                   </span>
-                  <span className="mt-1 block text-4xl tracking-tight font-extrabold sm:text-5xl xl:text-6xl">
-                    <span className="block text-gray-900">Advanced Warehouse</span>
-                    <span className="block text-indigo-600">Solutions</span>
+                  <span className="mt-1 block text-5xl tracking-tight font-black sm:text-6xl xl:text-7xl">
+                    <span className="block text-gray-900 dark:text-white">Advanced Warehouse</span>
+                    <span className="block text-gradient-primary mt-2">Solutions</span>
                   </span>
                 </h1>
-                <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
+                <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 sm:mt-8 sm:text-xl lg:text-lg xl:text-xl font-medium leading-relaxed">
                   Streamline your inventory, manage blocks and rooms with ease, and optimize your supply chain with our state-of-the-art warehouse management system.
                 </p>
-                <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
+                <div className="mt-10 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
                   {user ? (
                     <Link href="/dashboard">
-                      <Button size="lg" className="w-full sm:w-auto">
+                      <Button size="lg" className="w-full sm:w-auto bg-gradient-primary hover:opacity-90 text-white font-bold py-4 px-8 rounded-2xl shadow-2xl shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 hover:scale-105 group">
                         Go to Dashboard
-                        <ArrowRight className="ml-2 h-5 w-5" />
+                        <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                       </Button>
                     </Link>
                   ) : (
                     <div className="flex flex-col sm:flex-row gap-4">
                       <Link href="/register">
-                        <Button size="lg" className="w-full sm:w-auto">
+                        <Button size="lg" className="w-full sm:w-auto bg-gradient-primary hover:opacity-90 text-white font-bold py-4 px-8 rounded-2xl shadow-2xl shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 hover:scale-105 group">
                           Get Started
-                          <ArrowRight className="ml-2 h-5 w-5" />
+                          <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                         </Button>
                       </Link>
                       <Link href="/login">
-                        <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                        <Button variant="outline" size="lg" className="w-full sm:w-auto border-2 border-primary/30 hover:border-primary hover:bg-primary/5 text-primary font-bold py-4 px-8 rounded-2xl transition-all duration-300 hover:scale-105">
                           Log In
                         </Button>
                       </Link>
@@ -78,11 +60,14 @@ export default function Home() {
                   )}
                 </div>
               </div>
-              <div className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
-                <div className="relative mx-auto w-full rounded-lg shadow-lg lg:max-w-md">
-                  <div className="relative block w-full bg-white rounded-lg overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    <div className="p-8 bg-indigo-600 flex items-center justify-center">
-                      <Truck className="h-48 w-48 text-white/90" />
+              <div className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center animate-scale-in">
+                <div className="relative mx-auto w-full rounded-3xl shadow-2xl lg:max-w-md">
+                  <div className="relative block w-full bg-gradient-primary rounded-3xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary group">
+                    <div className="p-12 flex items-center justify-center relative overflow-hidden">
+                      <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
+                      <Truck className="h-48 w-48 text-white/90 relative z-10 group-hover:scale-110 transition-transform duration-500" />
+                      <div className="absolute top-10 right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl animate-pulse-subtle"></div>
+                      <div className="absolute bottom-10 left-10 w-24 h-24 bg-white/10 rounded-full blur-2xl animate-pulse-subtle" style={{ animationDelay: '1s' }}></div>
                     </div>
                   </div>
                 </div>
@@ -93,45 +78,105 @@ export default function Home() {
       </div>
 
       {/* Features Grid */}
-      <div className="py-12 bg-white">
+      <div className="py-20 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:text-center">
-            <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">Features</h2>
-            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+          <div className="lg:text-center animate-slide-up">
+            <h2 className="text-base text-primary font-black tracking-widest uppercase">Features</h2>
+            <p className="mt-4 text-4xl leading-tight font-black tracking-tight text-gray-900 dark:text-white sm:text-5xl">
               Everything you need to manage space
+            </p>
+            <p className="mt-4 max-w-2xl text-xl text-gray-600 dark:text-gray-300 lg:mx-auto font-medium">
+              Powerful tools designed for modern warehouse operations
             </p>
           </div>
 
-          <div className="mt-10">
-            <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
-              <div className="relative">
-                <dt>
-                  <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                    <Shield className="h-6 w-6" aria-hidden="true" />
+          <div className="mt-16">
+            <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8">
+              {[
+                {
+                  name: 'Secure Access',
+                  description: 'Role-based access control ensuring only authorized personnel can manage critical warehouse data.',
+                  icon: Shield,
+                  gradient: 'from-emerald-500 to-teal-600'
+                },
+                {
+                  name: 'Smart Storage',
+                  description: 'Efficiently organize, allocate, and track storage blocks and rooms to maximize capacity.',
+                  icon: Package,
+                  gradient: 'from-indigo-500 to-purple-600'
+                },
+                {
+                  name: 'Real-time Tracking',
+                  description: 'Monitor inventory levels and shipments in real-time with advanced tracking capabilities.',
+                  icon: Zap,
+                  gradient: 'from-amber-500 to-orange-600'
+                },
+                {
+                  name: 'Optimized Logistics',
+                  description: 'Streamline your supply chain with intelligent routing and automated workflows.',
+                  icon: Truck,
+                  gradient: 'from-blue-500 to-cyan-600'
+                },
+                {
+                  name: 'Performance Analytics',
+                  description: 'Gain insights with comprehensive analytics and reporting tools for data-driven decisions.',
+                  icon: TrendingUp,
+                  gradient: 'from-rose-500 to-pink-600'
+                },
+                {
+                  name: 'Quality Assurance',
+                  description: 'Maintain high standards with built-in quality checks and validation processes.',
+                  icon: CheckCircle,
+                  gradient: 'from-violet-500 to-purple-600'
+                }
+              ].map((feature, index) => (
+                <div
+                  key={feature.name}
+                  className="relative group animate-slide-up"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <div className="glass-card p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full border-2 border-transparent hover:border-primary/20">
+                    <dt>
+                      <div className={`flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br ${feature.gradient} text-white shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
+                        <feature.icon className="h-8 w-8" aria-hidden="true" />
+                      </div>
+                      <p className="mt-6 text-xl leading-6 font-black text-gray-900 dark:text-white">{feature.name}</p>
+                    </dt>
+                    <dd className="mt-3 text-base text-gray-600 dark:text-gray-300 font-medium leading-relaxed">
+                      {feature.description}
+                    </dd>
                   </div>
-                  <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Secure Access</p>
-                </dt>
-                <dd className="mt-2 ml-16 text-base text-gray-500">
-                  Role-based access control ensuring only authorized personnel can manage critical warehouse data.
-                </dd>
-              </div>
-
-              <div className="relative">
-                <dt>
-                  <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                    <CheckCircle className="h-6 w-6" aria-hidden="true" />
-                  </div>
-                  <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Smart Storage</p>
-                </dt>
-                <dd className="mt-2 ml-16 text-base text-gray-500">
-                  Efficiently organize, allocate, and track storage blocks and rooms to maximize capacity.
-                </dd>
-              </div>
+                </div>
+              ))}
             </dl>
           </div>
         </div>
       </div>
 
+      {/* CTA Section */}
+      <div className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-primary opacity-90"></div>
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-10 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute bottom-10 left-10 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-black text-white sm:text-5xl mb-6">
+            Ready to transform your warehouse?
+          </h2>
+          <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto font-medium">
+            Join thousands of businesses optimizing their operations with our platform
+          </p>
+          {!user && (
+            <Link href="/register">
+              <Button size="lg" className="bg-white text-primary hover:bg-gray-100 font-bold py-4 px-10 rounded-2xl shadow-2xl hover:shadow-white/20 transition-all duration-300 hover:scale-105">
+                Start Free Trial
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

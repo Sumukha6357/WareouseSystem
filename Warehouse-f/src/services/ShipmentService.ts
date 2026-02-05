@@ -28,8 +28,7 @@ export interface CreateShipmentRequest {
 
 export const ShipmentService = {
     getAllShipments: async () => {
-        // Assuming there is an endpoint for all or we filter
-        const response = await api.get<any>('/shipments'); // Changed from /active to match likely controller
+        const response = await api.get<any>('/shipments/active');
         return response.data.data;
     },
 

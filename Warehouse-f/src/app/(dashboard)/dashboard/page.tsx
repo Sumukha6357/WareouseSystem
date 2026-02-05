@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from "@/context/AuthContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import ShipperManagementView from "@/components/ShipperManagementView";
 import ShipmentManagementView from "@/components/ShipmentManagementView";
@@ -20,9 +20,12 @@ import {
     ShoppingCart,
     ClipboardList,
     Truck,
-    Ship
+    Ship,
+    Sun,
+    Moon
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { useTheme } from "@/context/ThemeContext";
 import UserManagementView from "@/components/UserManagementView";
 import WarehouseListView from "@/components/WarehouseListView";
 import HierarchyManagementView from "@/components/HierarchyManagementView";
@@ -37,6 +40,7 @@ type TabType = 'overview' | 'warehouses' | 'hierarchy' | 'products' | 'inventory
 
 export default function DashboardPage() {
     const { user, isLoading, logout } = useAuth();
+    const { theme, toggleTheme } = useTheme();
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<TabType>('overview');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -44,6 +48,17 @@ export default function DashboardPage() {
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [stats, setStats] = useState({ warehouses: 0, rooms: 0, blocks: 0, products: 0, inventories: 0, lowStock: 0 });
     const [profileData, setProfileData] = useState({ username: '', email: '' });
+    const profileRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+                setIsProfileOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     const fetchStats = async () => {
         try {
@@ -83,7 +98,6 @@ export default function DashboardPage() {
         try {
             await api.put(`/users/${user?.userId}`, profileData);
             setIsEditingProfile(false);
-            // Refresh user data
             window.location.reload();
         } catch (error) {
             console.error('Failed to update profile', error);
@@ -92,10 +106,10 @@ export default function DashboardPage() {
 
     if (isLoading) {
         return (
-            <div className="flex h-screen items-center justify-center bg-gray-50">
+            <div className="flex h-screen items-center justify-center bg-background">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
-                    <p className="font-medium text-gray-500">Initializing Dashboard...</p>
+                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                    <p className="font-medium text-gray-500 dark:text-gray-400">Initializing Dashboard...</p>
                 </div>
             </div>
         );
@@ -123,138 +137,144 @@ export default function DashboardPage() {
         switch (activeTab) {
             case 'overview':
                 return (
-                    <div className="space-y-6 animate-in fade-in duration-500">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                                <div className="p-3 bg-indigo-50 rounded-xl text-indigo-600">
-                                    <Building2 className="h-6 w-6" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-medium text-gray-400">Total Warehouses</p>
-                                    <h4 className="text-xl font-bold text-gray-900">{stats.warehouses}</h4>
-                                </div>
-                            </div>
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                                <div className="p-3 bg-emerald-50 rounded-xl text-emerald-600">
-                                    <Network className="h-6 w-6" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-medium text-gray-400">Total Rooms</p>
-                                    <h4 className="text-xl font-bold text-gray-900">{stats.rooms}</h4>
-                                </div>
-                            </div>
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                                <div className="p-3 bg-amber-50 rounded-xl text-amber-600">
-                                    <Package className="h-6 w-6" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-medium text-gray-400">Total Blocks</p>
-                                    <h4 className="text-xl font-bold text-gray-900">{stats.blocks}</h4>
-                                </div>
-                            </div>
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                                <div className="p-3 bg-purple-50 rounded-xl text-purple-600">
-                                    <Package className="h-6 w-6" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-medium text-gray-400">Products Available</p>
-                                    <h4 className="text-xl font-bold text-gray-900">{stats.products}</h4>
-                                </div>
-                            </div>
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                                <div className="p-3 bg-blue-50 rounded-xl text-blue-600">
-                                    <Boxes className="h-6 w-6" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-medium text-gray-400">Inventory Allocations</p>
-                                    <h4 className="text-xl font-bold text-gray-900">{stats.inventories}</h4>
-                                </div>
-                            </div>
-                            {stats.lowStock > 0 && (
-                                <div className="bg-amber-50 p-6 rounded-2xl shadow-sm border border-amber-200 flex items-center gap-4">
-                                    <div className="p-3 bg-amber-100 rounded-xl text-amber-700">
-                                        <Package className="h-6 w-6" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-medium text-amber-600">Low Stock Items</p>
-                                        <h4 className="text-xl font-bold text-amber-900">{stats.lowStock}</h4>
-                                    </div>
-                                </div>
-                            )}
+                    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        <div className="flex flex-col gap-2">
+                            <h1 className="text-3xl font-black text-sharp tracking-tight">
+                                Welcome back, <span className="text-primary">{user.username}</span>
+                            </h1>
+                            <p className="text-muted font-medium">Here's what's happening in your warehouse today.</p>
                         </div>
 
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                            <div className="px-6 py-5 border-b border-gray-50 flex justify-between items-center">
-                                <h3 className="text-lg font-bold text-gray-900">Personal Information</h3>
-                                {!isEditingProfile ? (
-                                    <Button variant="outline" size="sm" onClick={() => setIsEditingProfile(true)}>Edit Profile</Button>
-                                ) : (
-                                    <Button variant="outline" size="sm" onClick={() => {
-                                        setIsEditingProfile(false);
-                                        setProfileData({ username: user.username, email: user.email });
-                                    }}>Cancel</Button>
-                                )}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {[
+                                { label: 'Total Warehouses', value: stats.warehouses, icon: Building2, color: 'indigo', gradient: 'from-indigo-500 to-blue-600' },
+                                { label: 'Total Rooms', value: stats.rooms, icon: Network, color: 'emerald', gradient: 'from-emerald-500 to-teal-600' },
+                                { label: 'Total Blocks', value: stats.blocks, icon: Boxes, color: 'amber', gradient: 'from-amber-500 to-orange-600' },
+                                { label: 'Products Available', value: stats.products, icon: Package, color: 'purple', gradient: 'from-purple-500 to-pink-600' },
+                                { label: 'Inventory Allocations', value: stats.inventories, icon: ClipboardList, color: 'blue', gradient: 'from-blue-500 to-cyan-600' },
+                                ...(stats.lowStock > 0 ? [{ label: 'Low Stock Items', value: stats.lowStock, icon: Activity, color: 'rose', gradient: 'from-rose-500 to-red-600' }] : [])
+                            ].map((stat, i) => (
+                                <div
+                                    key={i}
+                                    className="group relative overflow-hidden glass-card p-6 rounded-3xl border-2 border-card-border shadow-xl shadow-black/5 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/30 animate-scale-in"
+                                    style={{ animationDelay: `${i * 100}ms` }}
+                                >
+                                    <div className={`absolute top-0 right-0 -mr-8 -mt-8 h-32 w-32 rounded-full bg-gradient-to-br ${stat.gradient} opacity-[0.08] transition-all duration-500 group-hover:scale-150 group-hover:opacity-[0.15] animate-pulse-subtle`}></div>
+                                    <div className="flex items-center gap-5 relative z-10">
+                                        <div className={`p-4 bg-gradient-to-br ${stat.gradient} text-white rounded-2xl shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-xl`}>
+                                            <stat.icon className="h-7 w-7" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1">{stat.label}</p>
+                                            <h4 className="text-4xl font-black text-sharp tabular-nums group-hover:text-primary transition-colors duration-300">{stat.value}</h4>
+                                        </div>
+                                    </div>
+                                    <div className={`absolute bottom-0 left-0 h-1.5 bg-gradient-to-r ${stat.gradient} transition-all duration-500 w-0 group-hover:w-full rounded-full`}></div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div className="lg:col-span-2 bg-card rounded-3xl shadow-xl shadow-black/5 border border-card-border overflow-hidden transition-all duration-300 hover:shadow-2xl">
+                                <div className="px-8 py-6 border-b border-card-border flex justify-between items-center bg-background/50">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-8 w-1 bg-primary rounded-full"></div>
+                                        <h3 className="text-lg font-black text-foreground uppercase tracking-tight">Personal Information</h3>
+                                    </div>
+                                    {!isEditingProfile ? (
+                                        <Button variant="outline" size="sm" className="rounded-xl font-bold uppercase tracking-wider text-[10px]" onClick={() => setIsEditingProfile(true)}>
+                                            Modify Account
+                                        </Button>
+                                    ) : (
+                                        <Button variant="outline" size="sm" className="rounded-xl font-bold uppercase tracking-wider text-[10px]" onClick={() => {
+                                            setIsEditingProfile(false);
+                                            setProfileData({ username: user.username, email: user.email });
+                                        }}>Discard</Button>
+                                    )}
+                                </div>
+                                <div className="p-8">
+                                    {isEditingProfile ? (
+                                        <form onSubmit={handleUpdateProfile} className="space-y-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">Username</label>
+                                                    <input
+                                                        type="text"
+                                                        className="w-full rounded-2xl border-2 border-input-border bg-background text-foreground text-sm py-3 px-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                                                        value={profileData.username}
+                                                        onChange={e => setProfileData({ ...profileData, username: e.target.value })}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">Email Address</label>
+                                                    <input
+                                                        type="email"
+                                                        className="w-full rounded-2xl border-2 border-input-border bg-background text-foreground text-sm py-3 px-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                                                        value={profileData.email}
+                                                        onChange={e => setProfileData({ ...profileData, email: e.target.value })}
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-4 pt-4">
+                                                <Button type="submit" className="rounded-2xl px-8 shadow-lg shadow-primary/20">Save Profile</Button>
+                                                <Button variant="outline" className="rounded-2xl px-8" onClick={() => {
+                                                    setIsEditingProfile(false);
+                                                    setProfileData({ username: user.username, email: user.email });
+                                                }}>Cancel</Button>
+                                            </div>
+                                        </form>
+                                    ) : (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
+                                            {[
+                                                { label: 'Username', value: user.username, icon: UsersIcon },
+                                                { label: 'Email Address', value: user.email, icon: Menu },
+                                                { label: 'Account Role', value: user.userRole, badge: true },
+                                                { label: 'Registered Since', value: new Date(user.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' }) }
+                                            ].map((item, idx) => (
+                                                <div key={idx} className="group">
+                                                    <dt className="text-[10px] font-black text-muted uppercase tracking-widest mb-1 group-hover:text-primary transition-colors">{item.label}</dt>
+                                                    <dd className="mt-1 flex items-center gap-2">
+                                                        {item.badge ? (
+                                                            <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase rounded-full border-2 border-primary/20">
+                                                                {item.value}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-base font-black text-sharp">{item.value}</span>
+                                                        )}
+                                                    </dd>
+                                                </div>
+                                            ))}
+                                            <div className="md:col-span-2 pt-4 border-t border-card-border">
+                                                <dt className="text-[10px] font-black text-muted uppercase tracking-widest mb-2">Unique Identifier</dt>
+                                                <dd className="mt-1">
+                                                    <code className="text-[11px] font-mono font-black text-emerald-600 dark:text-emerald-400 bg-emerald-500/5 px-4 py-2 rounded-xl border-2 border-emerald-500/10 block w-fit">
+                                                        {user.userId}
+                                                    </code>
+                                                </dd>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                            <div className="p-6">
-                                {isEditingProfile ? (
-                                    <form onSubmit={handleUpdateProfile} className="space-y-4">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="text-sm font-semibold text-gray-400 uppercase tracking-wider block mb-2">Username</label>
-                                                <input
-                                                    type="text"
-                                                    className="w-full rounded-lg border-gray-300 text-sm py-2 px-3"
-                                                    value={profileData.username}
-                                                    onChange={e => setProfileData({ ...profileData, username: e.target.value })}
-                                                    required
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="text-sm font-semibold text-gray-400 uppercase tracking-wider block mb-2">Email Address</label>
-                                                <input
-                                                    type="email"
-                                                    className="w-full rounded-lg border-gray-300 text-sm py-2 px-3"
-                                                    value={profileData.email}
-                                                    onChange={e => setProfileData({ ...profileData, email: e.target.value })}
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="flex gap-3">
-                                            <Button type="submit">Save Changes</Button>
-                                            <Button variant="outline" onClick={() => {
-                                                setIsEditingProfile(false);
-                                                setProfileData({ username: user.username, email: user.email });
-                                            }}>Cancel</Button>
-                                        </div>
-                                    </form>
-                                ) : (
-                                    <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                                        <div>
-                                            <dt className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Username</dt>
-                                            <dd className="mt-1 text-base font-medium text-gray-900">{user.username}</dd>
-                                        </div>
-                                        <div>
-                                            <dt className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Email Address</dt>
-                                            <dd className="mt-1 text-base font-medium text-gray-900">{user.email}</dd>
-                                        </div>
-                                        <div>
-                                            <dt className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Account Role</dt>
-                                            <dd className="mt-1 text-base font-medium text-gray-900">{user.userRole}</dd>
-                                        </div>
-                                        <div>
-                                            <dt className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Registered Since</dt>
-                                            <dd className="mt-1 text-base font-medium text-gray-900">{new Date(user.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })}</dd>
-                                        </div>
-                                        <div className="md:col-span-2">
-                                            <dt className="text-sm font-semibold text-gray-400 uppercase tracking-wider">User ID</dt>
-                                            <dd className="mt-1 text-xs font-mono font-medium text-gray-500 bg-gray-50 p-2 rounded border border-gray-100">{user.userId}</dd>
-                                        </div>
-                                    </dl>
-                                )}
+
+                            <div className="bg-gradient-to-br from-primary to-indigo-900 rounded-3xl p-8 text-white shadow-xl shadow-primary/20 flex flex-col justify-between relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 bg-white/10 rounded-full blur-3xl transition-transform duration-1000 group-hover:scale-150"></div>
+                                <div className="relative z-10">
+                                    <h3 className="text-2xl font-black leading-tight mb-4">Streamline Your Logistics</h3>
+                                    <p className="text-white/80 text-sm font-medium leading-relaxed">
+                                        Monitor warehouse occupancy, track high-turnover products, and optimize storage density in real-time.
+                                    </p>
+                                </div>
+                                <div className="relative z-10 pt-8">
+                                    <Button className="w-full bg-white hover:bg-white/90 !text-indigo-600 border-none rounded-2xl font-black py-6 shadow-xl shadow-black/20 text-lg transition-transform hover:scale-[1.02]">
+                                        View Insights
+                                    </Button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </div >
                 );
             case 'warehouses':
                 return <WarehouseListView />;
@@ -280,106 +300,148 @@ export default function DashboardPage() {
     };
 
     return (
-        <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
+        <div className="flex h-screen bg-background overflow-hidden font-sans text-foreground transition-colors duration-300">
             {/* Sidebar */}
             <aside
-                className={`${isSidebarOpen ? 'w-72' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 ease-in-out flex flex-col z-30`}
+                className={`${isSidebarOpen ? 'w-80' : 'w-24'} bg-sidebar border-r border-card-border transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col z-30 shadow-2xl shadow-black/5`}
             >
-                <div className="h-20 flex items-center px-6 border-b border-gray-50">
-                    <div className="h-10 w-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
-                        <Building2 className="h-6 w-6 text-white" />
+                <div className="h-24 flex items-center px-8 border-b border-card-border bg-sidebar/50 backdrop-blur-sm">
+                    <div className="h-12 w-12 bg-gradient-to-br from-primary to-indigo-800 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 animate-float">
+                        <Building2 className="h-7 w-7 text-white" />
                     </div>
                     {isSidebarOpen && (
-                        <span className="ml-3 font-black text-xl text-gray-900 tracking-tight">Warehouse<span className="text-indigo-600">MS</span></span>
+                        <div className="ml-4 flex flex-col animate-in fade-in slide-in-from-left-4 duration-500">
+                            <span className="font-black text-2xl text-foreground tracking-tighter leading-none">Warehouse<span className="text-primary">MS</span></span>
+                            <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1">Enterprise Core</span>
+                        </div>
                     )}
                 </div>
 
-                <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                <nav className="flex-1 px-4 py-8 space-y-2 overflow-y-auto scrollbar-hide">
                     {filteredNavItems.map((item) => (
                         <button
                             key={item.id}
                             onClick={() => setActiveTab(item.id as TabType)}
-                            className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group ${activeTab === item.id
-                                ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100'
-                                : 'text-gray-500 hover:bg-indigo-50 hover:text-indigo-600'
+                            className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group relative ${activeTab === item.id
+                                ? 'bg-primary text-white shadow-2xl shadow-primary/30'
+                                : 'text-gray-400 dark:text-gray-500 hover:bg-primary/5 hover:text-foreground'
                                 }`}
                         >
-                            <item.icon className={`h-5 w-5 ${activeTab === item.id ? 'text-white' : 'group-hover:scale-110 transition-transform'}`} />
+                            <item.icon className={`h-6 w-6 transition-transform duration-300 ${activeTab === item.id ? 'text-white' : 'group-hover:scale-125 group-hover:text-primary'}`} />
                             {isSidebarOpen && (
-                                <span className="font-bold text-sm tracking-wide">{item.label}</span>
+                                <span className={`font-black text-sm tracking-wide ${activeTab === item.id ? 'text-white' : 'text-gray-500 dark:text-gray-400 group-hover:text-foreground'}`}>{item.label}</span>
                             )}
                             {activeTab === item.id && isSidebarOpen && (
-                                <ChevronRight className="ml-auto h-4 w-4 opacity-50" />
+                                <div className="ml-auto bg-white/20 p-1 rounded-lg">
+                                    <ChevronRight className="h-3 w-3 text-white" />
+                                </div>
+                            )}
+                            {activeTab === item.id && !isSidebarOpen && (
+                                <div className="absolute left-0 w-1 h-8 bg-white rounded-r-full"></div>
                             )}
                         </button>
                     ))}
                 </nav>
+
+
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col overflow-hidden">
+            <main className="flex-1 flex flex-col overflow-hidden relative">
+                {/* Decorative BG element */}
+                <div className="absolute top-0 right-0 -mr-32 -mt-32 h-96 w-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 -ml-32 -mb-32 h-96 w-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none opacity-50"></div>
+
                 {/* Header */}
-                <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 z-20 shadow-sm shadow-gray-50">
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                            className="p-2 hover:bg-gray-50 rounded-lg text-gray-500 transition-colors"
-                        >
-                            {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-                        </button>
-                        <h2 className="text-xl font-black text-gray-900 uppercase tracking-widest hidden sm:block">
-                            {activeTab}
-                        </h2>
-                    </div>
-
-                    <div className="flex items-center gap-6">
-                        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full text-xs font-bold text-gray-500 border border-gray-100">
-                            <span className="h-2 w-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                            System Live
-                        </div>
-                        <div className="h-10 w-px bg-gray-100"></div>
-                        <div className="relative">
-                            <button
-                                onClick={() => setIsProfileOpen(!isProfileOpen)}
-                                className="flex items-center gap-3 hover:bg-gray-50 rounded-xl px-3 py-2 transition-colors"
+                <header className="h-24 bg-header glass z-20 transition-all duration-300 border-b border-card-border">
+                    <div className="h-full flex items-center justify-between px-10">
+                        <div className="flex items-center gap-6">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                className="h-12 w-12 rounded-2xl hover:bg-primary/5 p-0"
                             >
-                                <div className="text-right hidden sm:block">
-                                    <p className="text-sm font-bold text-gray-900">{user.username}</p>
-                                    <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-tighter">{user.userRole}</p>
-                                </div>
-                                <div className="h-10 w-10 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-full flex items-center justify-center text-white font-bold shadow-md shadow-indigo-100">
-                                    {user.username.charAt(0).toUpperCase()}
-                                </div>
-                            </button>
+                                <Menu className="h-6 w-6 text-gray-500" />
+                            </Button>
+                            <div className="h-10 w-px bg-card-border"></div>
+                            <div className="flex flex-col">
+                                <h2 className="text-xl font-black text-foreground uppercase tracking-tighter">
+                                    {activeTab.replace('-', ' ')}
+                                </h2>
+                            </div>
+                        </div>
 
-                            {/* Profile Dropdown */}
-                            {isProfileOpen && (
-                                <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                                    <div className="px-4 py-3 border-b border-gray-100">
-                                        <p className="text-sm font-bold text-gray-900">{user.username}</p>
-                                        <p className="text-xs text-gray-500 mt-0.5">{user.email}</p>
-                                        <span className="inline-block mt-2 px-2 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-bold uppercase rounded">
-                                            {user.userRole}
-                                        </span>
+                        <div className="flex items-center gap-8">
+
+                            <div className="relative" ref={profileRef}>
+                                <button
+                                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                    className="flex items-center gap-4 hover:bg-primary/5 rounded-2xl p-2 transition-all duration-300 group"
+                                >
+                                    <div className="text-right hidden sm:block">
+                                        <p className="text-sm font-black text-foreground tracking-tight">{user.username}</p>
+                                        <p className="text-[10px] font-black text-primary uppercase tracking-widest">{user.userRole}</p>
                                     </div>
-                                    <button
-                                        onClick={() => {
-                                            setIsProfileOpen(false);
-                                            logout();
-                                        }}
-                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 transition-colors text-sm font-medium"
-                                    >
-                                        <LogOut className="h-4 w-4" />
-                                        Logout
-                                    </button>
-                                </div>
-                            )}
+                                    <div className="h-12 w-12 bg-gradient-to-br from-gray-800 to-black dark:from-gray-700 dark:to-gray-900 rounded-2xl flex items-center justify-center text-white font-black shadow-xl shadow-black/10 dark:shadow-black/40 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6">
+                                        {user.username.charAt(0).toUpperCase()}
+                                    </div>
+                                </button>
+
+                                {/* Profile Dropdown */}
+                                {isProfileOpen && (
+                                    <div className="absolute right-0 mt-4 w-72 bg-card rounded-3xl shadow-2xl border border-card-border py-3 z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+                                        <div className="px-6 py-4 border-b border-card-border bg-background/50 rounded-t-3xl">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-10 w-10 bg-primary rounded-xl flex items-center justify-center text-white font-black">
+                                                    {user.username.charAt(0).toUpperCase()}
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <p className="text-sm font-black text-foreground tracking-tight">{user.username}</p>
+                                                    <p className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wider">{user.userRole}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="p-2 space-y-1">
+                                            <button
+                                                onClick={() => {
+                                                    toggleTheme();
+                                                }}
+                                                className="w-full flex items-center justify-between px-4 py-3 text-foreground hover:bg-primary/5 rounded-2xl transition-all duration-300 group"
+                                            >
+                                                <div className="flex items-center gap-4">
+                                                    <div className="p-2 bg-primary/10 rounded-xl group-hover:scale-110 transition-transform">
+                                                        {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+                                                    </div>
+                                                    <span className="font-black text-xs uppercase tracking-widest">
+                                                        {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                                                    </span>
+                                                </div>
+                                                <div className="h-2 w-2 rounded-full bg-primary animate-pulse"></div>
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    setIsProfileOpen(false);
+                                                    logout();
+                                                }}
+                                                className="w-full flex items-center gap-4 px-4 py-4 text-red-600 hover:bg-red-500/5 rounded-2xl transition-all duration-300 group"
+                                            >
+                                                <div className="p-2 bg-red-500/10 rounded-xl group-hover:scale-110 transition-transform">
+                                                    <LogOut className="h-4 w-4" />
+                                                </div>
+                                                <span className="font-black text-xs uppercase tracking-widest">Terminate Session</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </header>
 
-                <div className="flex-1 overflow-y-auto p-8 scrollbar-hide">
-                    <div className="max-w-6xl mx-auto pb-10">
+                <div className="flex-1 overflow-y-auto p-10 scrollbar-hide">
+                    <div className="max-w-7xl mx-auto">
                         {renderContent()}
                     </div>
                 </div>

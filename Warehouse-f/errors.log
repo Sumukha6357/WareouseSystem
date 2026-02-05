@@ -1,0 +1,2 @@
+src/components/analytics/FulfillmentMetrics.tsx(3,10): error TS2305: Module '"../../services/AnalyticsService"' has no exported member 'FulfillmentMetrics'.
+src/components/ProductManagementView.tsx(197,38): error TS2304: Cannot find name 'AlertTriangle'.
