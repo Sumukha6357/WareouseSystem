@@ -38,6 +38,26 @@ const DEFAULT_HEADERS: HeadersInit = {
     Accept: 'application/json',
 };
 
+const TOKEN_KEY = 'warehouse_token';
+
+let authToken: string | null = null;
+
+// Initialize token from localStorage if available (client-side only)
+if (typeof window !== 'undefined') {
+    authToken = localStorage.getItem(TOKEN_KEY);
+}
+
+export const setToken = (token: string | null) => {
+    authToken = token;
+    if (typeof window !== 'undefined') {
+        if (token) {
+            localStorage.setItem(TOKEN_KEY, token);
+        } else {
+            localStorage.removeItem(TOKEN_KEY);
+        }
+    }
+};
+
 // ─── Core request helper ──────────────────────────────────────────────────────
 
 async function request<T>(
@@ -65,10 +85,20 @@ async function request<T>(
     }
 
     // Merge headers
-    const mergedHeaders: HeadersInit =
-        rawBody
-            ? { ...(headers ?? {}) }          // let caller set Content-Type for form
-            : { ...DEFAULT_HEADERS, ...(headers ?? {}) };
+    const mergedHeaders: Headers = new Headers(DEFAULT_HEADERS);
+
+    if (authToken) {
+        mergedHeaders.set('Authorization', `Bearer ${authToken}`);
+    }
+
+    if (headers) {
+        Object.entries(headers).forEach(([k, v]) => mergedHeaders.set(k, v));
+    }
+
+    if (rawBody) {
+        // If rawBody is present, let the fetch decide Content-Type (e.g. for FormData)
+        // but we might want to override if caller provided specific headers
+    }
 
     const fetchOptions: RequestInit = {
         method,
@@ -148,6 +178,8 @@ export const httpClient = {
     delete<T = void>(path: string): Promise<T> {
         return request<T>('DELETE', path);
     },
+
+    setToken,
 };
 
 export default httpClient;

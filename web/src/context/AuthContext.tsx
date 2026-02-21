@@ -58,6 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setUser(userData);
         } catch {
             setUser(null);
+            httpClient.setToken(null);
             localStorage.removeItem(USER_STORAGE_KEY);
         } finally {
             setIsLoading(false);
@@ -71,11 +72,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const login = async (credentials: LoginCredentials) => {
         try {
-            // Updated to send JSON instead of Form Data to match backend @RequestBody
-            await httpClient.post('/login', {
+            // Updated to use JWT from login response
+            const loginData = await httpClient.post<{ token: string }>('/login', {
                 identifier: credentials.username,
                 password: credentials.password
             });
+            httpClient.setToken(loginData.token);
             await refreshUser();
             notify.success('Welcome back! Login successful');
             router.push('/dashboard');
@@ -115,6 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.error('Logout error:', error);
         } finally {
             setUser(null);
+            httpClient.setToken(null);
             localStorage.removeItem(USER_STORAGE_KEY);
             router.push('/login');
             notify.success('Logged out successfully');
