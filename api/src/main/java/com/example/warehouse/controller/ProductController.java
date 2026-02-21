@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/products")
 @Validated
 @Tag(name = "Products", description = "Product catalog endpoints")
 public class ProductController {

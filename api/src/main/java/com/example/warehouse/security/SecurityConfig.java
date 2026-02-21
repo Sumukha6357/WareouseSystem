@@ -86,14 +86,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/login", "/register").permitAll()
+                        .requestMatchers("/api/login", "/api/register").permitAll()
                         .requestMatchers(
-                                "/swagger-ui.html",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**")
+                                "/api/swagger-ui.html",
+                                "/api/swagger-ui/**",
+                                "/api/v3/api-docs/**")
                         .permitAll()
                         // Admin-only actuator
-                        .requestMatchers("/actuator/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/actuator/**").hasAuthority("ADMIN")
                         // Everything else requires a valid JWT
                         .anyRequest().authenticated())
                 // JWT filter runs before the standard username/password filter

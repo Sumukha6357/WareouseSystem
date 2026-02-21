@@ -31,7 +31,6 @@ services:
       JWT_SECRET: ${JWT_SECRET:-warehouse-super-secret-jwt-key-must-be-at-least-256-bits-long!!}
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
-      SERVER_SERVLET_CONTEXT_PATH: /api
     ports:
       - "${API_PORT:-5051}:8080"
     depends_on:
