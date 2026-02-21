@@ -5,6 +5,9 @@ spring:
       ddl-auto: update
   flyway:
     enabled: true
+server:
+  servlet:
+    context-path: /api
 management:
   endpoints:
     web:
