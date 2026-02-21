@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const cached = localStorage.getItem(USER_STORAGE_KEY);
             if (cached) setUser(JSON.parse(cached) as UserResponse);
 
-            const userData = await httpClient.get<UserResponse>('/api/users/me');
+            const userData = await httpClient.get<UserResponse>('/users/me');
             setUser(userData);
         } catch {
             setUser(null);
@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const login = async (credentials: LoginCredentials) => {
         try {
             // Updated to send JSON instead of Form Data to match backend @RequestBody
-            await httpClient.post('/api/login', {
+            await httpClient.post('/login', {
                 identifier: credentials.username,
                 password: credentials.password
             });
@@ -93,7 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const register = async (data: RegisterPayload) => {
         try {
-            await httpClient.post('/api/register', data);
+            await httpClient.post('/register', data);
             notify.success('Registration successful! Please login to continue');
             router.push('/login?registered=true');
         } catch (error: unknown) {
