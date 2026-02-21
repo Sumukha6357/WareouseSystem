@@ -33,6 +33,7 @@ graph TD
 
 - `api/`: Spring Boot core services and REST endpoints.
 - `web/`: Next.js frontend application with premium aesthetics.
+- `docs/`: Supplemental documentation including the [User Guide](file:///c:/Proj/Warehouse-Management/docs/UserGuide.md).
 
 ---
 
