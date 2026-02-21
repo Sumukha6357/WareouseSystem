@@ -18,6 +18,8 @@ spring:
     locations: classpath:db/migration
 
 server:
+  servlet:
+    context-path: /api
   error:
     whitelabel:
       enabled: false
