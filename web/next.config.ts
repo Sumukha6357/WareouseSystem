@@ -8,19 +8,19 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: `${backendBaseUrl}/:path*`,
+        destination: `${backendBaseUrl}/api/:path*`,
       },
       {
         source: "/login",
-        destination: `${backendBaseUrl}/login`,
+        destination: `${backendBaseUrl}/api/login`,
       },
       {
         source: "/logout",
-        destination: `${backendBaseUrl}/logout`,
+        destination: `${backendBaseUrl}/api/logout`,
       },
       {
         source: "/ws/:path*",
-        destination: `${backendBaseUrl}/ws/:path*`,
+        destination: `${backendBaseUrl}/api/ws/:path*`,
       }
     ];
   },

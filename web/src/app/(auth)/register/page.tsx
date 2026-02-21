@@ -30,7 +30,7 @@ export default function RegisterPage() {
         setError('');
 
         try {
-            await httpClient.post('/register', formData);
+            await httpClient.post('/api/register', formData);
             router.push('/login?registered=true');
         } catch (err: unknown) {
             setError(
