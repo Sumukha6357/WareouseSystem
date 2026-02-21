@@ -68,8 +68,9 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Warehouse-Id", "Accept"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
-        // We use JWT (Bearer header) not cookies, so credentials is not needed
-        configuration.setAllowCredentials(false);
+        // Frontend uses credentials: 'include', so we MUST allow them and use
+        // OriginPatterns
+        configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

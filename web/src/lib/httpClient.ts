@@ -114,6 +114,11 @@ async function request<T>(
 
     const res = await fetch(url, fetchOptions);
 
+    // Diagnostic logging for development
+    if (process.env.NODE_ENV !== 'production' || typeof window !== 'undefined') {
+        console.log(`[httpClient] ${method} ${url} -> ${res.status}`);
+    }
+
     // Parse response body
     let json: unknown;
     const contentType = res.headers.get('content-type') ?? '';
@@ -127,6 +132,8 @@ async function request<T>(
             wrapped?.message ||
             res.statusText ||
             `HTTP ${res.status}`;
+
+        console.error(`[httpClient ERROR] ${method} ${url}:`, { status: res.status, message, data: wrapped?.data });
         throw new ApiError(res.status, message, wrapped?.data);
     }
 

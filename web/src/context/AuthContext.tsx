@@ -56,7 +56,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             const userData = await httpClient.get<UserResponse>('/users/me');
             setUser(userData);
-        } catch {
+        } catch (error) {
+            console.error('[AuthContext] refreshUser failed:', error);
             setUser(null);
             httpClient.setToken(null);
             localStorage.removeItem(USER_STORAGE_KEY);
