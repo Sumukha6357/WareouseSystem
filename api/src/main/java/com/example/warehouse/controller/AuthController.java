@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.warehouse.dto.wrapper.ResponseStructure;
+import org.springframework.http.HttpStatus;
+
 @RestController
 @RequestMapping("/api")
 public class AuthController {
@@ -35,7 +38,7 @@ public class AuthController {
      * Accepts email/username + password, returns a JWT Bearer token.
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ResponseStructure<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.identifier(), request.password()));
 
@@ -46,6 +49,12 @@ public class AuthController {
                 .map(a -> a.getAuthority())
                 .orElse("");
 
-        return ResponseEntity.ok(new LoginResponse(token, role, userDetails.getUsername(), expirationMs));
+        LoginResponse loginResponse = new LoginResponse(token, role, userDetails.getUsername(), expirationMs);
+        ResponseStructure<LoginResponse> structure = new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Login successful",
+                loginResponse);
+
+        return ResponseEntity.ok(structure);
     }
 }
