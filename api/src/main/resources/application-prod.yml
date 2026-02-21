@@ -6,6 +6,11 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+  profiles:
+    active: prod
+server:
+  servlet:
+    context-path: /api
 springdoc:
   swagger-ui:
     enabled: false
