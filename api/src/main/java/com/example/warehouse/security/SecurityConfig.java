@@ -42,26 +42,10 @@ public class SecurityConfig {
     @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:3001}")
     private String allowedOriginsRaw;
 
-    private final UserRepository userRepository;
     private final JwtAuthFilter jwtAuthFilter;
 
-    public SecurityConfig(UserRepository userRepository, JwtAuthFilter jwtAuthFilter) {
-        this.userRepository = userRepository;
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> {
-            log.debug("Authenticating user identifier {}", username);
-            User user = userRepository.searchUserByIdentifier(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-            return org.springframework.security.core.userdetails.User.builder()
-                    .username(user.getEmail())
-                    .password(user.getPassword())
-                    .authorities(user.getUserRole().name())
-                    .build();
-        };
     }
 
     @Bean
