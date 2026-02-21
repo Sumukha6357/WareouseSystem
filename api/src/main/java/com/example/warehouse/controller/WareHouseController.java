@@ -43,7 +43,7 @@ public class WareHouseController {
                 return new ResponseEntity<ResponseStructure<WareHouseResponse>>(responseStructure, HttpStatus.CREATED);
         }
 
-        @PreAuthorize("hasAuthority('ADMIN')")
+        @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
         @GetMapping
         public ResponseEntity<ResponseStructure<java.util.List<WareHouseResponse>>> findAllWarehouses() {
                 List<WareHouseResponse> warehouses = wareHouseService.findAllWareHouses();
@@ -53,7 +53,7 @@ public class WareHouseController {
                 return new ResponseEntity<>(responseStructure, HttpStatus.OK);
         }
 
-        @PreAuthorize("hasAuthority('ADMIN')")
+        @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
         @GetMapping(params = { "page", "size" })
         public ResponseEntity<ResponseStructure<PageResponse<WareHouseResponse>>> findAllWarehousesPaged(
                         Pageable pageable) {
@@ -66,7 +66,7 @@ public class WareHouseController {
                 return new ResponseEntity<>(responseStructure, HttpStatus.OK);
         }
 
-        @PreAuthorize("hasAuthority('ADMIN')")
+        @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
         @GetMapping("/{warehouseId}")
         public ResponseEntity<ResponseStructure<WareHouseResponse>> findWarehouseById(
                         @PathVariable String warehouseId) {

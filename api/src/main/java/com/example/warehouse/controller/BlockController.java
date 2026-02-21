@@ -40,7 +40,7 @@ public class BlockController {
         return new ResponseEntity<ResponseStructure<BlockResponse>>(responseStructure, HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
     @GetMapping
     public ResponseEntity<ResponseStructure<java.util.List<BlockResponse>>> findAllBlocks() {
         java.util.List<BlockResponse> blocks = blockService.findAllBlocks();
@@ -50,7 +50,7 @@ public class BlockController {
         return new ResponseEntity<>(responseStructure, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
     @GetMapping(params = { "page", "size" })
     public ResponseEntity<ResponseStructure<PageResponse<BlockResponse>>> findAllBlocksPaged(Pageable pageable) {
         java.util.List<BlockResponse> blocks = blockService.findAllBlocks();
@@ -61,7 +61,7 @@ public class BlockController {
         return new ResponseEntity<>(responseStructure, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
     @GetMapping("/{blockId}")
     public ResponseEntity<ResponseStructure<BlockResponse>> findBlockById(@PathVariable String blockId) {
         BlockResponse block = blockService.findBlockById(blockId);

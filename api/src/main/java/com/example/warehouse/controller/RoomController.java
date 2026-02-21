@@ -40,7 +40,7 @@ public class RoomController {
         return new ResponseEntity<ResponseStructure<RoomResponse>>(responseStructure, HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
     @GetMapping
     public ResponseEntity<ResponseStructure<java.util.List<RoomResponse>>> findAllRooms() {
         java.util.List<RoomResponse> rooms = roomService.findAllRooms();
@@ -50,7 +50,7 @@ public class RoomController {
         return new ResponseEntity<>(responseStructure, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
     @GetMapping(params = { "page", "size" })
     public ResponseEntity<ResponseStructure<PageResponse<RoomResponse>>> findAllRoomsPaged(Pageable pageable) {
         java.util.List<RoomResponse> rooms = roomService.findAllRooms();
@@ -61,7 +61,7 @@ public class RoomController {
         return new ResponseEntity<>(responseStructure, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
     @GetMapping("/{roomId}")
     public ResponseEntity<ResponseStructure<RoomResponse>> findRoomById(@PathVariable String roomId) {
         RoomResponse room = roomService.findRoomById(roomId);

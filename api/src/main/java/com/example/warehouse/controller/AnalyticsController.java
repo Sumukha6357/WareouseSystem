@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.warehouse.dto.wrapper.ResponseStructure;
+import org.springframework.http.HttpStatus;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/analytics")
@@ -24,99 +25,141 @@ public class AnalyticsController {
 
     @GetMapping("/dashboard-summary")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, DashboardSummaryResponse>> getDashboardSummary() {
-        return ResponseEntity.ok(Map.of("data", analyticsService.getDashboardSummary()));
+    public ResponseEntity<ResponseStructure<DashboardSummaryResponse>> getDashboardSummary() {
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Dashboard summary retrieved",
+                analyticsService.getDashboardSummary()));
     }
 
     @GetMapping("/stock-turnover")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, List<StockTurnoverResponse>>> getStockTurnover() {
-        return ResponseEntity.ok(Map.of("data", analyticsService.getStockTurnover()));
+    public ResponseEntity<ResponseStructure<List<StockTurnoverResponse>>> getStockTurnover() {
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Stock turnover retrieved",
+                analyticsService.getStockTurnover()));
     }
 
     @GetMapping(value = "/stock-turnover", params = { "page", "size" })
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, PageResponse<StockTurnoverResponse>>> getStockTurnoverPaged(Pageable pageable) {
-        return ResponseEntity.ok(Map.of("data",
+    public ResponseEntity<ResponseStructure<PageResponse<StockTurnoverResponse>>> getStockTurnoverPaged(
+            Pageable pageable) {
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Stock turnover retrieved",
                 PageUtils.toPageResponse(PageUtils.paginate(analyticsService.getStockTurnover(), pageable))));
     }
 
     @GetMapping("/block-utilization")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, List<BlockUtilizationResponse>>> getBlockUtilization() {
-        return ResponseEntity.ok(Map.of("data", analyticsService.getBlockUtilization()));
+    public ResponseEntity<ResponseStructure<List<BlockUtilizationResponse>>> getBlockUtilization() {
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Block utilization retrieved",
+                analyticsService.getBlockUtilization()));
     }
 
     @GetMapping(value = "/block-utilization", params = { "page", "size" })
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, PageResponse<BlockUtilizationResponse>>> getBlockUtilizationPaged(
+    public ResponseEntity<ResponseStructure<PageResponse<BlockUtilizationResponse>>> getBlockUtilizationPaged(
             Pageable pageable) {
-        return ResponseEntity.ok(Map.of("data",
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Block utilization retrieved",
                 PageUtils.toPageResponse(PageUtils.paginate(analyticsService.getBlockUtilization(), pageable))));
     }
 
     @GetMapping("/fulfillment-metrics")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, FulfillmentMetricsResponse>> getFulfillmentMetrics() {
-        return ResponseEntity.ok(Map.of("data", analyticsService.getFulfillmentMetrics()));
+    public ResponseEntity<ResponseStructure<FulfillmentMetricsResponse>> getFulfillmentMetrics() {
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Fulfillment metrics retrieved",
+                analyticsService.getFulfillmentMetrics()));
     }
 
     @GetMapping("/shipment-metrics")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, ShipmentMetricsResponse>> getShipmentMetrics() {
-        return ResponseEntity.ok(Map.of("data", analyticsService.getShipmentMetrics()));
+    public ResponseEntity<ResponseStructure<ShipmentMetricsResponse>> getShipmentMetrics() {
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Shipment metrics retrieved",
+                analyticsService.getShipmentMetrics()));
     }
 
     @GetMapping("/pick-heatmap")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, List<PickHeatmapResponse>>> getPickHeatmap() {
-        return ResponseEntity.ok(Map.of("data", analyticsService.getPickHeatmap()));
+    public ResponseEntity<ResponseStructure<List<PickHeatmapResponse>>> getPickHeatmap() {
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Pick heatmap retrieved",
+                analyticsService.getPickHeatmap()));
     }
 
     @GetMapping(value = "/pick-heatmap", params = { "page", "size" })
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, PageResponse<PickHeatmapResponse>>> getPickHeatmapPaged(Pageable pageable) {
-        return ResponseEntity.ok(Map.of("data",
+    public ResponseEntity<ResponseStructure<PageResponse<PickHeatmapResponse>>> getPickHeatmapPaged(Pageable pageable) {
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Pick heatmap retrieved",
                 PageUtils.toPageResponse(PageUtils.paginate(analyticsService.getPickHeatmap(), pageable))));
     }
 
     @GetMapping("/picker-workload")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, List<PickerWorkloadResponse>>> getPickerWorkload() {
-        return ResponseEntity.ok(Map.of("data", analyticsService.getPickerWorkload()));
+    public ResponseEntity<ResponseStructure<List<PickerWorkloadResponse>>> getPickerWorkload() {
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Picker workload retrieved",
+                analyticsService.getPickerWorkload()));
     }
 
     @GetMapping(value = "/picker-workload", params = { "page", "size" })
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, PageResponse<PickerWorkloadResponse>>> getPickerWorkloadPaged(Pageable pageable) {
-        return ResponseEntity.ok(Map.of("data",
+    public ResponseEntity<ResponseStructure<PageResponse<PickerWorkloadResponse>>> getPickerWorkloadPaged(
+            Pageable pageable) {
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Picker workload retrieved",
                 PageUtils.toPageResponse(PageUtils.paginate(analyticsService.getPickerWorkload(), pageable))));
     }
 
     @GetMapping("/stock-confidence")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, List<StockConfidenceResponse>>> getStockConfidence() {
-        return ResponseEntity.ok(Map.of("data", analyticsService.getStockConfidence()));
+    public ResponseEntity<ResponseStructure<List<StockConfidenceResponse>>> getStockConfidence() {
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Stock confidence retrieved",
+                analyticsService.getStockConfidence()));
     }
 
     @GetMapping(value = "/stock-confidence", params = { "page", "size" })
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, PageResponse<StockConfidenceResponse>>> getStockConfidencePaged(
+    public ResponseEntity<ResponseStructure<PageResponse<StockConfidenceResponse>>> getStockConfidencePaged(
             Pageable pageable) {
-        return ResponseEntity.ok(Map.of("data",
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Stock confidence retrieved",
                 PageUtils.toPageResponse(PageUtils.paginate(analyticsService.getStockConfidence(), pageable))));
     }
 
     @GetMapping("/shipment-risk")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, List<ShipmentRiskResponse>>> getShipmentRisk() {
-        return ResponseEntity.ok(Map.of("data", analyticsService.getShipmentRisk()));
+    public ResponseEntity<ResponseStructure<List<ShipmentRiskResponse>>> getShipmentRisk() {
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Shipment risk retrieved",
+                analyticsService.getShipmentRisk()));
     }
 
     @GetMapping(value = "/shipment-risk", params = { "page", "size" })
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, PageResponse<ShipmentRiskResponse>>> getShipmentRiskPaged(Pageable pageable) {
-        return ResponseEntity.ok(Map.of("data",
+    public ResponseEntity<ResponseStructure<PageResponse<ShipmentRiskResponse>>> getShipmentRiskPaged(
+            Pageable pageable) {
+        return ResponseEntity.ok(new ResponseStructure<>(
+                HttpStatus.OK.value(),
+                "Shipment risk retrieved",
                 PageUtils.toPageResponse(PageUtils.paginate(analyticsService.getShipmentRisk(), pageable))));
     }
 }
