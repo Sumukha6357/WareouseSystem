@@ -3,8 +3,7 @@
 import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Icon } from 'leaflet';
-import { Vehicle } from '@/services/VehicleService';
-import { PickHeatmapResponse } from '@/services/AnalyticsService';
+import type { VehicleResponse, PickHeatmapResponse } from '@/types/api';
 
 // Fix Leaflet default icon issue in Next.js
 const bufferIcon = new Icon({
@@ -22,7 +21,7 @@ const vehicleIcon = new Icon({
 });
 
 interface MapProps {
-    vehicles: Vehicle[];
+    vehicles: VehicleResponse[];
     warehouses?: unknown[]; // Allow partial
     pickHeatmap?: PickHeatmapResponse[];
 }

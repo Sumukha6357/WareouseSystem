@@ -9,6 +9,7 @@ import { useWebSocket } from '@/hooks/useWebSocket';
 import { notify } from '@/lib/notify';
 import { Badge } from '@/components/ui/Badge';
 import type { VehicleResponse, PickHeatmapResponse } from '@/types/api';
+import { VehicleService } from '@/services/VehicleService';
 
 // Dynamic import for Leaflet map (client-side only)
 const MapComponent = dynamic(() => import('@/components/ui/Map'), {
@@ -73,26 +74,24 @@ export default function LiveTrackingView() {
                     {
                         vehicleId: 'v1',
                         vehicleNumber: 'TRUCK-001',
-                        licensePlate: 'ABC-123',
                         driverName: 'John Doe',
                         driverPhone: '555-0123',
-                        capacity: 1000,
+                        shipperId: 's1',
                         active: true,
                         lastLatitude: 37.7749,
                         lastLongitude: -122.4194,
-                        lastUpdatedAt: Date.now()
+                        lastUpdatedAt: new Date().toISOString()
                     },
                     {
                         vehicleId: 'v2',
                         vehicleNumber: 'TRUCK-002',
-                        licensePlate: 'XYZ-789',
                         driverName: 'Jane Smith',
                         driverPhone: '555-0124',
-                        capacity: 1500,
+                        shipperId: 's1',
                         active: true,
                         lastLatitude: 37.7849,
                         lastLongitude: -122.4094,
-                        lastUpdatedAt: Date.now()
+                        lastUpdatedAt: new Date().toISOString()
                     }
                 ];
                 setVehicles(mockVehicles);
