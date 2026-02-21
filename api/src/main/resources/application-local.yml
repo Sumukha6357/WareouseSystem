@@ -1,4 +1,9 @@
 spring:
+  profiles:
+    active: local
+server:
+  servlet:
+    context-path: /api
   datasource:
     url: jdbc:postgresql://localhost:5432/warehouse_db
     username: postgres
