@@ -67,6 +67,32 @@ Visit `http://localhost:3000` to access the interface.
 
 ---
 
+## 🛠 Environment Profiles
+
+The system supports three primary profiles to cater to different development and deployment stages:
+
+| Profile | Target | Description |
+| :--- | :--- | :--- |
+| **local** | Local machine | Uses `localhost` for DB and API. Best for quick local dev. |
+| **dev** | Server (Dev) | Runs in Docker. Enables Swagger and detailed actuator metrics. |
+| **prod** | Server (Prod) | Hardened for production. Swagger is disabled, strict DB migration. |
+
+### Configuration via `.env`
+Shared variables are managed in the root `.env` file. You can override these for different server environments:
+- `SPRING_PROFILES_ACTIVE`: Set to `local`, `dev`, or `prod`.
+- `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`: Target database coordinates.
+- `JWT_SECRET`: Critical security key for production.
+
+**Backend Override:**
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+**Frontend Environment:**
+The frontend automatically picks up `.env.local`, `.env.development`, or `.env.production` based on the `NODE_ENV`.
+
+---
+
 ## 🔒 Security & Roles
 The system implements Role-Based Access Control (RBAC):
 - **ADMIN**: Full system override and management.

@@ -4,14 +4,14 @@ services:
     container_name: warehouse-postgres
     environment:
       POSTGRES_DB: warehouse_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-root}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d warehouse_db" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d warehouse_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -25,12 +25,12 @@ services:
     container_name: warehouse-api
     environment:
       DB_URL: jdbc:postgresql://postgres:5432/warehouse_db
-      DB_USERNAME: postgres
-      DB_PASSWORD: root
-      SPRING_PROFILES_ACTIVE: prod
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
       JWT_SECRET: ${JWT_SECRET:-warehouse-super-secret-jwt-key-must-be-at-least-256-bits-long!!}
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:3001}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
     ports:
       - "8080:8080"
     depends_on:
@@ -46,7 +46,7 @@ services:
     container_name: warehouse-web
     environment:
       BACKEND_BASE_URL: http://api:8080
-      NODE_ENV: production
+      NODE_ENV: ${NODE_ENV:-production}
     ports:
       - "3000:3000"
     depends_on:
@@ -57,7 +57,6 @@ services:
 
 volumes:
   postgres_data:
-
 
 networks:
   warehouse-net:

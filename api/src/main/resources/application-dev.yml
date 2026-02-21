@@ -1,6 +1,10 @@
 spring:
   jpa:
     show-sql: true
+    hibernate:
+      ddl-auto: update
+  flyway:
+    enabled: true
 management:
   endpoints:
     web:
