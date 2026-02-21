@@ -45,8 +45,19 @@ graph TD
 - Java 17+
 
 ### 2. Launch Infrastructure (Docker)
+
+**Local Development (DB only or full stack):**
 ```bash
-cd api
+docker compose -f docker-compose.local.yml up -d
+```
+
+**Server Development (Full stack with standard creds):**
+```bash
+docker compose -f docker-compose.dev.yml up -d
+```
+
+**Production (Optimized):**
+```bash
 docker compose up -d
 ```
 

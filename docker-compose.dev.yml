@@ -1,0 +1,63 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: warehouse-postgres-dev
+    environment:
+      POSTGRES_DB: warehouse_db
+      POSTGRES_USER: warehouse_user
+      POSTGRES_PASSWORD: warehouse_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U warehouse_user -d warehouse_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - warehouse-dev-net
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: warehouse-api-dev
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/warehouse_db
+      DB_USERNAME: warehouse_user
+      DB_PASSWORD: warehouse_password
+      SPRING_PROFILES_ACTIVE: dev
+      JWT_SECRET: ${JWT_SECRET:-warehouse-dev-secret-key-change-this-in-env!!}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-*}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - warehouse-dev-net
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: warehouse-web-dev
+    environment:
+      BACKEND_BASE_URL: http://api:8080
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_started
+    networks:
+      - warehouse-dev-net
+
+volumes:
+  postgres_dev_data:
+
+
+networks:
+  warehouse-dev-net:
+    driver: bridge

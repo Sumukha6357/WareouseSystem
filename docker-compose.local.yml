@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: warehouse-postgres-local
+    environment:
+      POSTGRES_DB: warehouse_db
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-root}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_local_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d warehouse_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # In local mode, we often run just the DB in Docker 
+  # but if we want to run everything, here they are:
+  api:
+    build:
+      context: ./api
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/warehouse_db
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      SPRING_PROFILES_ACTIVE: local
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./web
+    environment:
+      BACKEND_BASE_URL: http://api:8080
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_started
+
+volumes:
+  postgres_local_data:
