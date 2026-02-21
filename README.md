@@ -82,25 +82,37 @@ Visit `http://localhost:3000` to access the interface.
 
 The system supports three primary profiles to cater to different development and deployment stages:
 
-| Profile | Target | Description |
-| :--- | :--- | :--- |
-| **local** | Local machine | Uses `localhost` for DB and API. Best for quick local dev. |
-| **dev** | Server (Dev) | Runs in Docker. Enables Swagger and detailed actuator metrics. |
-| **prod** | Server (Prod) | Hardened for production. Swagger is disabled, strict DB migration. |
+| Profile | Target | Description | Web Port | API Port |
+| :--- | :--- | :--- | :--- | :--- |
+| **local** | Local machine | Best for quick local dev. | 3000 | 8080 |
+| **dev** | Server (Dev) | Docker dev with Swagger. | 3050 | 5050 |
+| **prod** | Server (Prod) | Hardened for production. | 3051 | 5051 |
 
 ### Configuration via `.env`
 Shared variables are managed in the root `.env` file. You can override these for different server environments:
 - `SPRING_PROFILES_ACTIVE`: Set to `local`, `dev`, or `prod`.
+- `API_PORT`, `WEB_PORT`: Custom port mappings.
 - `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`: Target database coordinates.
 - `JWT_SECRET`: Critical security key for production.
 
-**Backend Override:**
+**Docker Commands:**
+
+**Local Development (3000/8080):**
 ```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+docker compose -f docker-compose.local.yml up -d
 ```
 
-**Frontend Environment:**
-The frontend automatically picks up `.env.local`, `.env.development`, or `.env.production` based on the `NODE_ENV`.
+**Server Development (3050/5050):**
+```bash
+docker compose -f docker-compose.dev.yml up -d
+```
+
+**Production (3051/5051):**
+```bash
+docker compose -f docker-compose.prod.yml up -d
+# OR simply:
+docker compose up -d
+```
 
 ---
 

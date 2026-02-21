@@ -31,7 +31,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-warehouse-dev-secret-key-change-this-in-env!!}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-*}
     ports:
-      - "8080:8080"
+      - "5050:8080"
     depends_on:
       postgres:
         condition: service_healthy
@@ -47,7 +47,7 @@ services:
       BACKEND_BASE_URL: http://api:8080
       NODE_ENV: development
     ports:
-      - "3000:3000"
+      - "3050:3000"
     depends_on:
       api:
         condition: service_started

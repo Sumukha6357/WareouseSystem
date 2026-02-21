@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: warehouse-postgres
+    container_name: warehouse-postgres-prod
     environment:
       POSTGRES_DB: warehouse_db
       POSTGRES_USER: ${DB_USERNAME:-postgres}
@@ -9,56 +9,55 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_prod_data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d warehouse_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - warehouse-net
+      - warehouse-prod-net
 
   api:
     build:
       context: ./api
       dockerfile: Dockerfile
-    container_name: warehouse-api
+    container_name: warehouse-api-prod
     environment:
       DB_URL: jdbc:postgresql://postgres:5432/warehouse_db
       DB_USERNAME: ${DB_USERNAME:-postgres}
       DB_PASSWORD: ${DB_PASSWORD:-root}
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
-      JWT_SECRET: ${JWT_SECRET:-warehouse-super-secret-jwt-key-must-be-at-least-256-bits-long!!}
-      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
+      SPRING_PROFILES_ACTIVE: prod
+      JWT_SECRET: ${JWT_SECRET}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
     ports:
-      - "${API_PORT:-5051}:8080"
+      - "5051:8080"
     depends_on:
       postgres:
         condition: service_healthy
     networks:
-      - warehouse-net
+      - warehouse-prod-net
 
   web:
     build:
       context: ./web
       dockerfile: Dockerfile
-    container_name: warehouse-web
+    container_name: warehouse-web-prod
     environment:
       BACKEND_BASE_URL: http://api:8080
-      NODE_ENV: ${NODE_ENV:-production}
+      NODE_ENV: production
     ports:
-      - "${WEB_PORT:-3051}:3000"
+      - "3051:3000"
     depends_on:
       api:
         condition: service_started
     networks:
-      - warehouse-net
+      - warehouse-prod-net
 
 volumes:
-  postgres_data:
+  postgres_prod_data:
 
 
 networks:
-  warehouse-net:
+  warehouse-prod-net:
     driver: bridge
