@@ -1,65 +1,194 @@
 # Warehouse Management System
 
-A comprehensive, full-stack Warehouse Management System (WMS) built to streamline inventory tracking, order fulfillment, and shipment management.
+A full-stack Warehouse Management System (WMS) monorepo for inventory operations, order fulfillment, shipment tracking, and operational analytics.
 
-## 🚀 Features
+## Overview
 
-*   **Inventory Logistics**: Real-time tracking of stock across multiple warehouses and storage blocks with strict **Capacity Guard** enforcement.
-*   **Predictive Intelligence**: AI-driven **Stock Confidence** scoring and **Shipment Risk** radar to proactively identify stock inaccuracies and fulfillment delays.
-*   **Spatial Awareness**: Interactive **Warehouse Heatmaps** visualizing active picks, spatial congestion, and storage utilization.
-*   **Operational Observability**: Real-time system health dashboard showing **API Latency**, WebSocket session stability, and fulfillment bottlenecks.
-*   **Advanced Fulfillment**: End-to-end workflow (Pick -> Pack -> Dispatch) with strict sequencing and **Team Pulse** productivity tracking.
-*   **Enterprise Security**: Robust Role-Based Access Control (RBAC) with 7+ granular roles (Warehouse Manager, Picker, Packer, Supervisor, Auditor, etc.).
-*   **Rich Activity Feed**: Live audit trails of all stock movements and staff activities for total transparency.
+- Frontend app: `web`
+- Backend API: `api`
+- Monorepo root: shared docs and repository metadata
 
-## 🛠 Tech Stack
+## Tech Stack
 
-**Frontend (`Warehouse-f`)**
-*   **Framework**: Next.js 14 (App Router)
-*   **Language**: TypeScript
-*   **Styling**: Tailwind CSS, Lucide Icons
-*   **State/Data**: Axios, React Hooks
+### Frontend (`web`)
 
-**Backend (`Warehouse-b`)**
-*   **Framework**: Spring Boot 3
-*   **Language**: Java 17+
-*   **Database**: MySQL (Hibernate/JPA)
-*   **Security**: Spring Security (JWT)
-*   **Documentation**: Swagger UI
+- Next.js 16 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Axios for API access
+- STOMP/SockJS client support for real-time updates
 
-## 📂 Project Structure
+### Backend (`api`)
 
-This is a Monorepo containing both the backend and frontend applications:
+- Spring Boot 3.4.6
+- Java 17
+- Spring Data JPA (Hibernate)
+- PostgreSQL
+- Spring Security with session/form login (`/login`, `/logout`)
+- Spring WebSocket + STOMP broker
 
-*   `/Warehouse-b`: Spring Boot Backend Application
-*   `/Warehouse-f`: Next.js Frontend Application
+## Architecture (Text Diagram)
 
-## 🏁 Getting Started
+```text
+Browser
+  |
+  | HTTP: http://localhost:3000
+  v
+Next.js Frontend (web)
+  |- App Router pages/components
+  |- Axios client baseURL = /api
+  |- next.config.ts rewrites:
+  |    /api/*    -> http://localhost:8080/*
+  |    /login    -> http://localhost:8080/login
+  |    /logout   -> http://localhost:8080/logout
+  |    /ws/*     -> http://localhost:8080/ws/*
+  v
+Spring Boot API (api) :8080
+  |- REST controllers
+  |- Spring Security (form login/session + RBAC)
+  |- Service layer
+  |- JPA repositories
+  |- WebSocket/STOMP endpoint: /ws
+  v
+PostgreSQL :5432
+```
+
+## Project Structure
+
+- `/web` - Next.js frontend
+- `/api` - Spring Boot backend
+- `/README.md` - root project documentation
+
+## Ports
+
+- `3000`: Next.js dev server
+- `8080`: Spring Boot API server
+- `5432`: PostgreSQL database
+
+## Environment Variables
+
+Backend (`api`, from `application.yml` and compose):
+
+- `DB_URL` (default: `jdbc:postgresql://localhost:5432/warehouse_db`)
+- `DB_USERNAME` (default: `postgres`)
+- `DB_PASSWORD` (default: `password`)
+
+Frontend (`web`):
+
+- No mandatory runtime env var for local proxy mode.
+- Frontend calls `/api/*`, with proxy/rewrites defined in `web/next.config.ts`.
+
+## Local Development
 
 ### Prerequisites
-*   Node.js 18+
-*   Java JDK 17+
-*   MySQL Server
 
-### Backend Setup
-1.  Navigate to `Warehouse-b`.
-2.  Update `src/main/resources/application.properties` with your MySQL credentials.
-3.  Run the application:
-    ```bash
-    ./mvnw spring-boot:run
-    ```
+- Node.js 18+ (or newer)
+- npm
+- Java 17+
+- PostgreSQL 15+ (or Docker)
 
-### Frontend Setup
-1.  Navigate to `Warehouse-f`.
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
-3.  Run the development server:
-    ```bash
-    npm run dev
-    ```
-4.  Open `http://localhost:3000` in your browser.
+### Option A: Run with local PostgreSQL
 
-## 👥 Authors
-*   Sumukha KY
+1. Start PostgreSQL and create database `warehouse_db`.
+2. Set backend DB env vars.
+3. Start backend:
+
+```bash
+cd api
+./mvnw spring-boot:run
+```
+
+4. Start frontend in another terminal:
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+5. Open `http://localhost:3000`.
+
+### Option B: Use Docker for backend + DB
+
+```bash
+cd api
+docker compose up --build
+```
+
+Then run frontend locally:
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+## Build and Run
+
+### Frontend
+
+```bash
+cd web
+npm install
+npm run build
+npm run start
+```
+
+### Backend
+
+```bash
+cd api
+./mvnw clean package
+java -jar target/warehouse-api-0.0.1-SNAPSHOT.jar
+```
+
+## Testing
+
+### Frontend checks
+
+```bash
+cd web
+npm run lint
+npm run build
+```
+
+### Backend checks
+
+```bash
+cd api
+./mvnw test
+```
+
+Notes:
+- Backend tests require valid DB connectivity for the configured datasource.
+- If you only need compile verification:
+
+```bash
+cd api
+./mvnw -DskipTests compile
+```
+
+## Authentication and Security Notes
+
+- Authentication mode is session/form login (not JWT).
+- Public registration endpoint: `/register`
+- Login processing endpoint: `/login`
+- Logout endpoint: `/logout`
+- Role-based authorization is enforced through method-level security annotations.
+
+## Real-Time Communication
+
+- Backend enables WebSocket message broker with STOMP.
+- SockJS endpoint: `/ws`
+- Simple broker destination prefix: `/topic`
+
+## CI Status and Explanation
+
+- There is currently no CI pipeline configuration in this repository (no GitHub Actions workflow files detected).
+- As a result, quality checks are currently expected to run locally (`npm run lint`, `npm run build`, `./mvnw test`).
+- Recommended next step is to add CI to run frontend and backend checks on each PR.
+
+## Authors
+
+- Sumukha KY

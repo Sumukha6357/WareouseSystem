@@ -1,0 +1,91 @@
+
+> warehouse-web@0.1.0 lint
+> eslint
+
+
+C:\Proj\Warehouse-Management\web\src\components\ActivityFeedView.tsx
+  8:16  warning  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Proj\Warehouse-Management\web\src\components\PickTaskView.tsx
+   12:48  warning  'Timer' is defined but never used         @typescript-eslint/no-unused-vars
+   12:81  warning  'ChevronRight' is defined but never used  @typescript-eslint/no-unused-vars
+  107:49  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Proj\Warehouse-Management\web\src\components\ProductManagementView.tsx
+  15:5  warning  'X' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Proj\Warehouse-Management\web\src\components\ShipmentManagementView.tsx
+  12:16  warning  'CardHeader' is defined but never used   @typescript-eslint/no-unused-vars
+  12:28  warning  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Proj\Warehouse-Management\web\src\components\ShipperManagementView.tsx
+  7:10  warning  'Input' is defined but never used   @typescript-eslint/no-unused-vars
+  8:30  warning  'X' is defined but never used       @typescript-eslint/no-unused-vars
+  8:33  warning  'Pencil' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Proj\Warehouse-Management\web\src\components\UserManagementView.tsx
+  6:77  warning  'UserPlus' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Proj\Warehouse-Management\web\src\components\WarehouseDetailView.tsx
+   7:10  warning  'Input' is defined but never used       @typescript-eslint/no-unused-vars
+  17:5   warning  'X' is defined but never used           @typescript-eslint/no-unused-vars
+  31:8   warning  'ErrorState' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Proj\Warehouse-Management\web\src\components\WarehouseListView.tsx
+  15:5   warning  'X' is defined but never used                @typescript-eslint/no-unused-vars
+  25:64  warning  'CardDescription' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Proj\Warehouse-Management\web\src\components\analytics\SystemHealthPanel.tsx
+  23:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Proj\Warehouse-Management\web\src\components\auth\__tests__\RequireRole.test.tsx
+  13:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  29:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  44:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Proj\Warehouse-Management\web\src\components\orders\AssignPickerModal.tsx
+  7:10  warning  'User' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Proj\Warehouse-Management\web\src\components\orders\DispatchModal.tsx
+  7:10  warning  'Truck' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Proj\Warehouse-Management\web\src\components\orders\OrderDetailsModal.tsx
+   7:16  warning  'CardHeader' is defined but never used    @typescript-eslint/no-unused-vars
+   9:5   warning  'Trash2' is defined but never used        @typescript-eslint/no-unused-vars
+  13:5   warning  'SearchCheck' is defined but never used   @typescript-eslint/no-unused-vars
+  84:71  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Proj\Warehouse-Management\web\src\components\orders\OrderForm.tsx
+  5:10  warning  'Input' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Proj\Warehouse-Management\web\src\components\orders\OrderList.tsx
+   4:37   warning  'MoreHorizontal' is defined but never used  @typescript-eslint/no-unused-vars
+   4:53   warning  'User' is defined but never used            @typescript-eslint/no-unused-vars
+   4:59   warning  'Package' is defined but never used         @typescript-eslint/no-unused-vars
+   4:68   warning  'CheckCircle2' is defined but never used    @typescript-eslint/no-unused-vars
+   4:82   warning  'Truck' is defined but never used           @typescript-eslint/no-unused-vars
+   4:89   warning  'XCircle' is defined but never used         @typescript-eslint/no-unused-vars
+   4:98   warning  'Clock' is defined but never used           @typescript-eslint/no-unused-vars
+   4:105  warning  'AlertTriangle' is defined but never used   @typescript-eslint/no-unused-vars
+  73:5    warning  'onCancel' is defined but never used        @typescript-eslint/no-unused-vars
+
+C:\Proj\Warehouse-Management\web\src\context\AuthContext.tsx
+  69:9  warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')
+
+C:\Proj\Warehouse-Management\web\src\lib\websocket.ts
+   9:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  73:57  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Proj\Warehouse-Management\web\src\services\__tests__\ShipmentService.test.ts
+  21:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  32:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:72  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Proj\Warehouse-Management\web\src\test\setup.ts
+  2:10  warning  'beforeAll' is defined but never used  @typescript-eslint/no-unused-vars
+  2:32  warning  'afterAll' is defined but never used   @typescript-eslint/no-unused-vars
+
+✖ 45 problems (12 errors, 33 warnings)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
+

@@ -1,0 +1,81 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.example:warehouse-api >----------------------
+[INFO] Building warehouse-api 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ warehouse-api ---
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ warehouse-api ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ warehouse-api ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ warehouse-api ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.3:test (default-test) @ warehouse-api ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.example.warehouse.controller.SoftDeleteIntegrationTest
+19:18:19.734 [main] INFO org.testcontainers.images.PullPolicy -- Image pull policy will be performed by: DefaultPullPolicy()
+19:18:19.743 [main] INFO org.testcontainers.utility.ImageNameSubstitutor -- Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+19:18:19.872 [main] INFO org.testcontainers.DockerClientFactory -- Testcontainers version: 1.20.6
+19:18:20.321 [main] INFO org.testcontainers.dockerclient.DockerMachineClientProviderStrategy -- docker-machine executable was not found on PATH ([C:\Users\kysum\bin, C:\Program Files\Git\mingw64\bin, C:\Program Files\Git\usr\local\bin, C:\Program Files\Git\usr\bin, C:\Program Files\Git\usr\bin, C:\Program Files\Git\mingw64\bin, C:\Program Files\Git\usr\bin, C:\Users\kysum\bin, C:\Program Files\Eclipse Adoptium\jdk-17.0.17.10-hotspot\bin, C:\Program Files\Eclipse Adoptium\jdk-17.0.17.10-hotspot\bin, C:\Windows\System32, C:\Windows, C:\Windows\System32\Wbem, C:\Windows\System32\WindowsPowerShell\v1.0, C:\Program Files\nodejs, C:\Users\kysum\AppData\Local\Android\Sdk\platform-tools, C:\Users\kysum\AppData\Local\Android\Sdk\emulator, C:\Program Files\Git\cmd, C:\Program Files (x86)\cloudflared, C:\Program Files\Docker\Docker\resources\bin, %MAVEN_HOME%\bin, C:\Program Files\Apache\maven\apache-maven-3.9.12\bin, C:\Windows\System32\OpenSSH, C:\Program Files\Eclipse Adoptium\jdk-17.0.17.10-hotspot\bin, C:\Windows\System32, C:\Windows, C:\Windows\System32\Wbem, C:\Windows\System32\WindowsPowerShell\v1.0, C:\Program Files\nodejs, C:\Users\kysum\AppData\Local\Android\Sdk\platform-tools, C:\Users\kysum\AppData\Local\Android\Sdk\emulator, C:\Program Files\Git\cmd, C:\Program Files\Docker\Docker\resources\bin, C:\Program Files (x86)\cloudflared, C:\Users\kysum\AppData\Local\Programs\cursor\resources\app\codeBin, C:\Users\kysum\AppData\Local\Microsoft\WindowsApps, C:\Users\kysum\AppData\Local\Programs\Microsoft VS Code\bin, C:\Users\kysum\AppData\Roaming\npm, C:\Users\kysum\AppData\Local\Programs\cursor\resources\app\bin, C:\Users\kysum\AppData\Local\Programs\Antigravity\bin, C:\Program Files\MongoDB\Tools\100\bin, C:\Program Files\Git\usr\bin\vendor_perl, C:\Program Files\Git\usr\bin\core_perl])
+19:18:20.323 [main] ERROR org.testcontainers.dockerclient.DockerClientProviderStrategy -- Could not find a valid Docker environment. Please check configuration. Attempted configurations were:
+As no valid configuration was found, execution cannot continue.
+See https://java.testcontainers.org/on_failure.html for more details.
+19:18:20.474 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.example.warehouse.controller.SoftDeleteIntegrationTest]: SoftDeleteIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+19:18:20.826 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.example.warehouse.WarehouseApiApplication for test class com.example.warehouse.controller.SoftDeleteIntegrationTest
+[ERROR] Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.462 s <<< FAILURE! -- in com.example.warehouse.controller.SoftDeleteIntegrationTest
+[ERROR] com.example.warehouse.controller.SoftDeleteIntegrationTest -- Time elapsed: 1.462 s <<< ERROR!
+java.lang.IllegalStateException: Could not find a valid Docker environment. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.lambda$getFirstValidStrategy$7(DockerClientProviderStrategy.java:274)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:265)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:154)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:196)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:108)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:321)
+	at org.testcontainers.junit.jupiter.TestcontainersExtension$StoreAdapter.start(TestcontainersExtension.java:276)
+	at org.testcontainers.junit.jupiter.TestcontainersExtension$StoreAdapter.access$200(TestcontainersExtension.java:263)
+	at org.testcontainers.junit.jupiter.TestcontainersExtension.lambda$startContainers$4(TestcontainersExtension.java:83)
+	at org.testcontainers.junit.jupiter.TestcontainersExtension.lambda$startContainers$5(TestcontainersExtension.java:83)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.testcontainers.junit.jupiter.TestcontainersExtension.startContainers(TestcontainersExtension.java:83)
+	at org.testcontainers.junit.jupiter.TestcontainersExtension.beforeAll(TestcontainersExtension.java:57)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Errors: 
+[ERROR]   SoftDeleteIntegrationTest » IllegalState Could not find a valid Docker environment. Please see logs and check configuration
+[INFO] 
+[ERROR] Tests run: 1, Failures: 0, Errors: 1, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  6.459 s
+[INFO] Finished at: 2026-02-20T19:18:21+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.3:test (default-test) on project warehouse-api: 
+[ERROR] 
+[ERROR] See C:\Proj\Warehouse-Management\api\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

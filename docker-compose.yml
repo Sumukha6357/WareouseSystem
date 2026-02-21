@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: warehouse-postgres
+    environment:
+      POSTGRES_DB: warehouse_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d warehouse_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - warehouse-net
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: warehouse-api
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/warehouse_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: root
+      SPRING_PROFILES_ACTIVE: prod
+      JWT_SECRET: ${JWT_SECRET:-warehouse-super-secret-jwt-key-must-be-at-least-256-bits-long!!}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:3001}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - warehouse-net
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: warehouse-web
+    environment:
+      BACKEND_BASE_URL: http://api:8080
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_started
+    networks:
+      - warehouse-net
+
+volumes:
+  postgres_data:
+
+
+networks:
+  warehouse-net:
+    driver: bridge
