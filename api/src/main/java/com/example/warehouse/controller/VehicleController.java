@@ -10,6 +10,7 @@ import com.example.warehouse.util.PageUtils;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +21,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/vehicles")
+@RequestMapping("/api/vehicles")
 @Validated
+@RequiredArgsConstructor
 public class VehicleController {
 
     private final VehicleService vehicleService;
-
-    public VehicleController(VehicleService vehicleService) {
-        this.vehicleService = vehicleService;
-    }
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")

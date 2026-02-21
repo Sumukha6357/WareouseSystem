@@ -4,6 +4,7 @@ import com.example.warehouse.dto.analytics.*;
 import com.example.warehouse.dto.wrapper.PageResponse;
 import com.example.warehouse.service.contract.AnalyticsService;
 import com.example.warehouse.util.PageUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,15 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/analytics")
-@org.springframework.web.bind.annotation.CrossOrigin("*")
+@RequestMapping("/api/analytics")
+@RequiredArgsConstructor
 public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
-
-    public AnalyticsController(AnalyticsService analyticsService) {
-        this.analyticsService = analyticsService;
-    }
 
     @GetMapping("/dashboard-summary")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
@@ -37,7 +34,7 @@ public class AnalyticsController {
         return ResponseEntity.ok(Map.of("data", analyticsService.getStockTurnover()));
     }
 
-    @GetMapping(value = "/stock-turnover", params = {"page", "size"})
+    @GetMapping(value = "/stock-turnover", params = { "page", "size" })
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
     public ResponseEntity<Map<String, PageResponse<StockTurnoverResponse>>> getStockTurnoverPaged(Pageable pageable) {
         return ResponseEntity.ok(Map.of("data",
@@ -50,9 +47,10 @@ public class AnalyticsController {
         return ResponseEntity.ok(Map.of("data", analyticsService.getBlockUtilization()));
     }
 
-    @GetMapping(value = "/block-utilization", params = {"page", "size"})
+    @GetMapping(value = "/block-utilization", params = { "page", "size" })
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, PageResponse<BlockUtilizationResponse>>> getBlockUtilizationPaged(Pageable pageable) {
+    public ResponseEntity<Map<String, PageResponse<BlockUtilizationResponse>>> getBlockUtilizationPaged(
+            Pageable pageable) {
         return ResponseEntity.ok(Map.of("data",
                 PageUtils.toPageResponse(PageUtils.paginate(analyticsService.getBlockUtilization(), pageable))));
     }
@@ -75,7 +73,7 @@ public class AnalyticsController {
         return ResponseEntity.ok(Map.of("data", analyticsService.getPickHeatmap()));
     }
 
-    @GetMapping(value = "/pick-heatmap", params = {"page", "size"})
+    @GetMapping(value = "/pick-heatmap", params = { "page", "size" })
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
     public ResponseEntity<Map<String, PageResponse<PickHeatmapResponse>>> getPickHeatmapPaged(Pageable pageable) {
         return ResponseEntity.ok(Map.of("data",
@@ -88,7 +86,7 @@ public class AnalyticsController {
         return ResponseEntity.ok(Map.of("data", analyticsService.getPickerWorkload()));
     }
 
-    @GetMapping(value = "/picker-workload", params = {"page", "size"})
+    @GetMapping(value = "/picker-workload", params = { "page", "size" })
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
     public ResponseEntity<Map<String, PageResponse<PickerWorkloadResponse>>> getPickerWorkloadPaged(Pageable pageable) {
         return ResponseEntity.ok(Map.of("data",
@@ -101,9 +99,10 @@ public class AnalyticsController {
         return ResponseEntity.ok(Map.of("data", analyticsService.getStockConfidence()));
     }
 
-    @GetMapping(value = "/stock-confidence", params = {"page", "size"})
+    @GetMapping(value = "/stock-confidence", params = { "page", "size" })
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
-    public ResponseEntity<Map<String, PageResponse<StockConfidenceResponse>>> getStockConfidencePaged(Pageable pageable) {
+    public ResponseEntity<Map<String, PageResponse<StockConfidenceResponse>>> getStockConfidencePaged(
+            Pageable pageable) {
         return ResponseEntity.ok(Map.of("data",
                 PageUtils.toPageResponse(PageUtils.paginate(analyticsService.getStockConfidence(), pageable))));
     }
@@ -114,7 +113,7 @@ public class AnalyticsController {
         return ResponseEntity.ok(Map.of("data", analyticsService.getShipmentRisk()));
     }
 
-    @GetMapping(value = "/shipment-risk", params = {"page", "size"})
+    @GetMapping(value = "/shipment-risk", params = { "page", "size" })
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','WAREHOUSE_MANAGER','SUPERVISOR')")
     public ResponseEntity<Map<String, PageResponse<ShipmentRiskResponse>>> getShipmentRiskPaged(Pageable pageable) {
         return ResponseEntity.ok(Map.of("data",

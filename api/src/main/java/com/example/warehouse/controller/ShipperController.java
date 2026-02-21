@@ -10,6 +10,7 @@ import com.example.warehouse.service.contract.ShipperService;
 import com.example.warehouse.util.PageUtils;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +21,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/shippers")
+@RequestMapping("/api/shippers")
 @Validated
+@RequiredArgsConstructor
 public class ShipperController {
 
     private final ShipperService shipperService;
-
-    public ShipperController(ShipperService shipperService) {
-        this.shipperService = shipperService;
-    }
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")

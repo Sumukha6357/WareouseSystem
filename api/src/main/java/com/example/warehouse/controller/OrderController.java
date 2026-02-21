@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/orders")
 @Validated
 @Tag(name = "Orders", description = "Order and picking endpoints")
 public class OrderController {
