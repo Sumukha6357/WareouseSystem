@@ -85,7 +85,7 @@ The system supports three primary profiles to cater to different development and
 | Profile | Target | Description | Web Port | API Port |
 | :--- | :--- | :--- | :--- | :--- |
 | **local** | Local machine | Best for quick local dev. | 3000 | 8080 |
-| **dev** | Server (Dev) | Docker dev with Swagger. | 3050 | 5050 |
+| **dev** | Server (Dev) | Docker dev with Swagger. | 3052 | 5052 |
 | **prod** | Server (Prod) | Hardened for production. | 3051 | 5051 |
 
 ### Configuration via `.env`
@@ -102,7 +102,7 @@ Shared variables are managed in the root `.env` file. You can override these for
 docker compose -f docker-compose.local.yml up -d
 ```
 
-**Server Development (3050/5050):**
+**Server Development (3052/5052):**
 ```bash
 docker compose -f docker-compose.dev.yml up -d
 ```
