@@ -31,7 +31,7 @@ public class RoomController {
     private RoomService roomService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/rooms/{warehouseId}")
+    @PostMapping("/{warehouseId}")
     public ResponseEntity<ResponseStructure<RoomResponse>> createRoom(@Valid @RequestBody RoomRequest request,
             @PathVariable String warehouseId) {
         RoomResponse roomResponse = roomService.createRoom(request, warehouseId);
@@ -41,7 +41,7 @@ public class RoomController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/rooms")
+    @GetMapping
     public ResponseEntity<ResponseStructure<java.util.List<RoomResponse>>> findAllRooms() {
         java.util.List<RoomResponse> rooms = roomService.findAllRooms();
         ResponseStructure<java.util.List<RoomResponse>> responseStructure = new ResponseStructure<>(
@@ -51,7 +51,7 @@ public class RoomController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping(value = "/rooms", params = { "page", "size" })
+    @GetMapping(params = { "page", "size" })
     public ResponseEntity<ResponseStructure<PageResponse<RoomResponse>>> findAllRoomsPaged(Pageable pageable) {
         java.util.List<RoomResponse> rooms = roomService.findAllRooms();
         PageResponse<RoomResponse> pageResponse = PageUtils.toPageResponse(PageUtils.paginate(rooms, pageable));
@@ -62,7 +62,7 @@ public class RoomController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/rooms/{roomId}")
+    @GetMapping("/{roomId}")
     public ResponseEntity<ResponseStructure<RoomResponse>> findRoomById(@PathVariable String roomId) {
         RoomResponse room = roomService.findRoomById(roomId);
         ResponseStructure<RoomResponse> responseStructure = new ResponseStructure<>(
@@ -72,7 +72,7 @@ public class RoomController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("/rooms/{roomId}")
+    @PutMapping("/{roomId}")
     public ResponseEntity<ResponseStructure<RoomResponse>> updateRoom(
             @PathVariable String roomId,
             @Valid @RequestBody RoomRequest request) {
@@ -84,7 +84,7 @@ public class RoomController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/rooms/{roomId}")
+    @DeleteMapping("/{roomId}")
     public ResponseEntity<ResponseStructure<RoomResponse>> deleteRoom(@PathVariable String roomId) {
         RoomResponse room = roomService.deleteRoom(roomId);
         ResponseStructure<RoomResponse> responseStructure = new ResponseStructure<>(
@@ -94,7 +94,7 @@ public class RoomController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/rooms/{roomId}/restore")
+    @PostMapping("/{roomId}/restore")
     public ResponseEntity<ResponseStructure<RoomResponse>> restoreRoom(@PathVariable String roomId) {
         RoomResponse room = roomService.restoreRoom(roomId);
         ResponseStructure<RoomResponse> responseStructure = new ResponseStructure<>(

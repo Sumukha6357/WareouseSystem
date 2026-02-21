@@ -32,7 +32,7 @@ public class WareHouseController {
         private WareHouseService wareHouseService;
 
         @PreAuthorize("hasAuthority('ADMIN')")
-        @PostMapping("/warehouses/{userId}")
+        @PostMapping("/{userId}")
         public ResponseEntity<ResponseStructure<WareHouseResponse>> createWareHouse(
                         @Valid @RequestBody WareHouseRequest wareHouseRequest, @PathVariable String userId) {
 
@@ -44,7 +44,7 @@ public class WareHouseController {
         }
 
         @PreAuthorize("hasAuthority('ADMIN')")
-        @GetMapping("/warehouses")
+        @GetMapping
         public ResponseEntity<ResponseStructure<java.util.List<WareHouseResponse>>> findAllWarehouses() {
                 List<WareHouseResponse> warehouses = wareHouseService.findAllWareHouses();
                 ResponseStructure<List<WareHouseResponse>> responseStructure = new ResponseStructure<>(
@@ -54,7 +54,7 @@ public class WareHouseController {
         }
 
         @PreAuthorize("hasAuthority('ADMIN')")
-        @GetMapping(value = "/warehouses", params = { "page", "size" })
+        @GetMapping(params = { "page", "size" })
         public ResponseEntity<ResponseStructure<PageResponse<WareHouseResponse>>> findAllWarehousesPaged(
                         Pageable pageable) {
                 List<WareHouseResponse> warehouses = wareHouseService.findAllWareHouses();
@@ -67,7 +67,7 @@ public class WareHouseController {
         }
 
         @PreAuthorize("hasAuthority('ADMIN')")
-        @GetMapping("/warehouses/{warehouseId}")
+        @GetMapping("/{warehouseId}")
         public ResponseEntity<ResponseStructure<WareHouseResponse>> findWarehouseById(
                         @PathVariable String warehouseId) {
                 WareHouseResponse warehouse = wareHouseService.findWareHouseById(warehouseId);
@@ -77,7 +77,7 @@ public class WareHouseController {
         }
 
         @PreAuthorize("hasAuthority('ADMIN')")
-        @PutMapping("/warehouses/{warehouseId}")
+        @PutMapping("/{warehouseId}")
         public ResponseEntity<ResponseStructure<WareHouseResponse>> updateWarehouse(
                         @PathVariable String warehouseId,
                         @Valid @RequestBody WareHouseRequest wareHouseRequest) {
@@ -88,7 +88,7 @@ public class WareHouseController {
         }
 
         @PreAuthorize("hasAuthority('ADMIN')")
-        @DeleteMapping("/warehouses/{warehouseId}")
+        @DeleteMapping("/{warehouseId}")
         public ResponseEntity<ResponseStructure<WareHouseResponse>> deleteWarehouse(@PathVariable String warehouseId) {
                 WareHouseResponse warehouse = wareHouseService.deleteWareHouse(warehouseId);
                 ResponseStructure<WareHouseResponse> responseStructure = new ResponseStructure<>(HttpStatus.OK.value(),
@@ -97,7 +97,7 @@ public class WareHouseController {
         }
 
         @PreAuthorize("hasAuthority('ADMIN')")
-        @PostMapping("/warehouses/{warehouseId}/restore")
+        @PostMapping("/{warehouseId}/restore")
         public ResponseEntity<ResponseStructure<WareHouseResponse>> restoreWarehouse(@PathVariable String warehouseId) {
                 WareHouseResponse warehouse = wareHouseService.restoreWareHouse(warehouseId);
                 ResponseStructure<WareHouseResponse> responseStructure = new ResponseStructure<>(HttpStatus.OK.value(),

@@ -31,7 +31,7 @@ public class BlockController {
     private BlockService blockService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/blocks/{roomId}")
+    @PostMapping("/{roomId}")
     public ResponseEntity<ResponseStructure<BlockResponse>> createBlock(@Valid @RequestBody BlockRequest request,
             @PathVariable String roomId) {
         BlockResponse blockResponse = blockService.createBlock(request, roomId);
@@ -41,7 +41,7 @@ public class BlockController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/blocks")
+    @GetMapping
     public ResponseEntity<ResponseStructure<java.util.List<BlockResponse>>> findAllBlocks() {
         java.util.List<BlockResponse> blocks = blockService.findAllBlocks();
         ResponseStructure<java.util.List<BlockResponse>> responseStructure = new ResponseStructure<>(
@@ -51,7 +51,7 @@ public class BlockController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping(value = "/blocks", params = { "page", "size" })
+    @GetMapping(params = { "page", "size" })
     public ResponseEntity<ResponseStructure<PageResponse<BlockResponse>>> findAllBlocksPaged(Pageable pageable) {
         java.util.List<BlockResponse> blocks = blockService.findAllBlocks();
         PageResponse<BlockResponse> pageResponse = PageUtils.toPageResponse(PageUtils.paginate(blocks, pageable));
@@ -62,7 +62,7 @@ public class BlockController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/blocks/{blockId}")
+    @GetMapping("/{blockId}")
     public ResponseEntity<ResponseStructure<BlockResponse>> findBlockById(@PathVariable String blockId) {
         BlockResponse block = blockService.findBlockById(blockId);
         ResponseStructure<BlockResponse> responseStructure = new ResponseStructure<>(
@@ -72,7 +72,7 @@ public class BlockController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("/blocks/{blockId}")
+    @PutMapping("/{blockId}")
     public ResponseEntity<ResponseStructure<BlockResponse>> updateBlock(
             @PathVariable String blockId,
             @Valid @RequestBody BlockRequest request) {
@@ -84,7 +84,7 @@ public class BlockController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/blocks/{blockId}")
+    @DeleteMapping("/{blockId}")
     public ResponseEntity<ResponseStructure<BlockResponse>> deleteBlock(@PathVariable String blockId) {
         BlockResponse block = blockService.deleteBlock(blockId);
         ResponseStructure<BlockResponse> responseStructure = new ResponseStructure<>(
@@ -94,7 +94,7 @@ public class BlockController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/blocks/{blockId}/restore")
+    @PostMapping("/{blockId}/restore")
     public ResponseEntity<ResponseStructure<BlockResponse>> restoreBlock(@PathVariable String blockId) {
         BlockResponse block = blockService.restoreBlock(blockId);
         ResponseStructure<BlockResponse> responseStructure = new ResponseStructure<>(
