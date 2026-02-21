@@ -11,14 +11,6 @@ const nextConfig: NextConfig = {
         destination: `${backendBaseUrl}/api/:path*`,
       },
       {
-        source: "/login",
-        destination: `${backendBaseUrl}/api/login`,
-      },
-      {
-        source: "/logout",
-        destination: `${backendBaseUrl}/api/logout`,
-      },
-      {
         source: "/ws/:path*",
         destination: `${backendBaseUrl}/api/ws/:path*`,
       }
